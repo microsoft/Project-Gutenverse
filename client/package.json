@@ -1,0 +1,14 @@
+{
+  "name": "gutenverse",
+  "version": "1.0.0",
+  "description": "An AI driven pipeline for story to metaverse generation",
+  "main": "app.js",
+  "scripts": {
+    "test": "http-server"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
+}
