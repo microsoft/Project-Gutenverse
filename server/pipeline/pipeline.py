@@ -1,6 +1,10 @@
+from analyzerstage import AnalyzerStage
+
 class Pipeline:
     def __init__(self):
-        self.stages = []
+        self.stages = [
+            AnalyzerStage()
+        ]
 
     def add_stage(self, stage):
         self.stages.append(stage)

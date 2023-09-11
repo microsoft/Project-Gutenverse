@@ -6,7 +6,7 @@ import uuid
 from stage import Stage
 
 class AnalyzerStage(Stage):
-    def process(self, data):
+    def process(self, context):
         dotenv.load_dotenv()
         openai.api_key = os.getenv ("OpenAIApiKey")
 
@@ -14,16 +14,16 @@ class AnalyzerStage(Stage):
             model = "gpt-3.5-turbo-16k",
             messages=[{
                 "role": "user",
-                "content": self.create_analysis_prompt(data)
+                "content": self.create_analysis_prompt(context.story_data)
             }]
         )
 
         print(output)
-        self.save_response_output(output["choices"][0]["message"]["content"])
+        self.save_response_output(output["choices"][0]["message"]["content"], context)
         return output
     
-    def save_response_output(self, response_payload):
-        subfolder = os.path.join("../stories", str(uuid.uuid4()))
+    def save_response_output(self, response_payload, context):
+        subfolder = os.path.join("../stories", context.id)
         os.makedirs(subfolder)
 
         filename = "1_analysis_stage.json"
@@ -46,10 +46,10 @@ class AnalyzerStage(Stage):
         analyzer_prompt = content.replace("{{story_data}}", story_data)
         
         return analyzer_prompt
-    
 
-stage = AnalyzerStage()
-stage.process('''
+from pipelinecontext import PipelineContext
+testData = PipelineContext()
+testData.story_data = '''
 The Hare and the Tortoise
 
 A HARE one day ridiculed the short feet and slow pace of the Tortoise,
@@ -63,4 +63,7 @@ lying down by the wayside, fell fast asleep. At last waking up, and
 moving as fast as he could, he saw the Tortoise had reached the goal,
 and was comfortably dozing after her fatigue.
 
-Slow but steady wins the race.''')
+Slow but steady wins the race.'''
+
+stage = AnalyzerStage()
+stage.process(testData)
