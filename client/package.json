@@ -4,6 +4,7 @@
   "description": "An AI driven pipeline for story to metaverse generation",
   "main": "app.js",
   "scripts": {
+    "start": "http-server",
     "test": "http-server"
   },
   "author": "",
