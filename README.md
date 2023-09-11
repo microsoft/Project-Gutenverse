@@ -6,6 +6,7 @@
  - Install [NodeJS](https://nodejs.org/en/download)
  - Run npm install in /client
  - Run pip install in /server
+ - Add your OpenAI key to an environment variable named OpenAIApiKey
 
 # Build and Test
 
