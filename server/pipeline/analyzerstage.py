@@ -4,11 +4,12 @@ import os
 import json
 import uuid
 from stage import Stage
+from config import config
 
 class AnalyzerStage(Stage):
     def process(self, context):
         dotenv.load_dotenv()
-        openai.api_key = os.getenv ("OpenAIApiKey")
+        openai.api_key = config.OpenAIApiKey
 
         output = openai.ChatCompletion.create(
             model = "gpt-3.5-turbo-16k",
