@@ -9,21 +9,28 @@ class AnalyzerStage(Stage):
         dotenv.load_dotenv()
         openai.api_key = os.getenv ("OpenAIApiKey")
 
-        output = openai.ChatCompletion.create(
-            model = "gpt-3.5-turbo-16k",
-            messages=[{
-                "role": "user",
-                "content": self.create_analysis_prompt(context.story_data)
-            }]
-        )
+        for i, scene in enumerate(context.segmentation_analysis.scenes):
+            output = openai.ChatCompletion.create(
+                model = "gpt-3.5-turbo-16k",
+                messages=[{
+                    "role": "user",
+                    "content": self.create_analysis_prompt(scene["body"])
+                }]
+            )
 
-        print(output)
-        self.save_response_output(output["choices"][0]["message"]["content"], context)
+            print(output)
+            try:
+                self.save_response_output(output["choices"][0]["message"]["content"], context, i)
+                print("Successfully produced analysis for scene " + str(i))
+            except:
+                print("Encountered an error processing story " + str(i) + " skipping this story")
+                
+
         return output
     
-    def save_response_output(self, response_payload, context):
+    def save_response_output(self, response_payload, context, sceneIndex):
         filename = "1_analysis_stage.json"
-        file = os.path.join(context.filepath, filename)
+        file = os.path.join(context.filepath + '//' + str(sceneIndex), filename)
         
         # Convert the string representation of JSON to a Python dictionary
         json_data = json.loads(response_payload)

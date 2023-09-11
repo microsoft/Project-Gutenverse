@@ -44,6 +44,7 @@ class SegmentationStage(Stage):
                     "start_index": scene["startIndex"],
                     "end_index": scene["endIndex"]
                 }, f)
+        context.segmentation_analysis = analysis
 
     def _segment_block_into_scenes(self, block, analysis):
         dotenv.load_dotenv()
