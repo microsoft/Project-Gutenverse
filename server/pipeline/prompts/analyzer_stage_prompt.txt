@@ -1,0 +1,31 @@
+Hi!  Could you parse some text and extract the  following:
+- The protagonists / main characters
+- A description of the setting for the purpose of generating a skybox image
+- A description of the mood / suggestion of appropriate ambient audio
+
+Please use JSON as the output format and use specifics for descriptions rather than a speculation.  Here is a sample of the schema you should use:
+
+{
+  "characters": {
+	"The Lion": "A powerful and proud animal who is initially skeptical of the mouse's ability to help him but is later saved by the mouse",
+	"The Mouse": "A small and seemingly insignificant creature who shows courage and gratitude by saving the lion."
+  },
+  "setting": {
+	"location": "A natural wilderness setting, such as a savanna, grassland, or forest.",
+	"timeofday": "Since the lion was asleep at the beginning, it could be early morning or late ",
+	"weather": "A clear sky or partly cloudy sky"
+	"visualelements": "The presence of the lion and mouse, ropes binding the lion, and possibly some trees, grass, or rocks."
+  },
+  "audio": {
+	"mood": "The mood can be described as tense, suspenseful, and ultimately triumphant. There's an underlying theme of humility and unexpected friendship.",
+	"sequence": {
+		"1": "Soft rustling, animal noises, and the mouse's scampering.",
+		"2": "Tense music, sounds of hunters, ropes tightening.",
+		"3": "The sound of gnawing, ropes snapping, and triumphant music as the lion is freed."
+	}
+  }
+}
+
+Below is the text to parse:
+
+{{story_data}}

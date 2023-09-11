@@ -22,15 +22,7 @@ def get_stories():
 def create_story():
     # Generate a new GUID
     new_guid = str(uuid.uuid4())
-
-    # Create a new directory for the story
-    new_story_directory = os.path.join(stories_directory, new_guid)
-    os.makedirs(new_story_directory)
-
-    # Save the story as a JSON file in the new directory
-    story = request.json
-    with open(os.path.join(new_story_directory, "story.json"), "w") as f:
-        json.dump(story, f)
+    # todo: refactor to run pipeline with the new story payload
 
     return jsonify({"guid": new_guid}), 201
 

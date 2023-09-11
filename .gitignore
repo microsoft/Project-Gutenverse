@@ -1,2 +1,4 @@
 client/node_modules/
-server/server/stories
+server/stories
+
+**/__pycache__/
