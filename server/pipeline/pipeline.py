@@ -2,13 +2,15 @@ import os
 import json
 from analyzerstage import AnalyzerStage
 from segmentationstage import SegmentationStage
+from charactergenstage import CharacterGenStage
 from config import config
 
 class Pipeline:
     def __init__(self):
         self.stages = [
             SegmentationStage(),
-            AnalyzerStage()
+            AnalyzerStage(),
+            CharacterGenStage()
         ]
 
     def add_stage(self, stage):
