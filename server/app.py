@@ -9,10 +9,14 @@ app = Flask(__name__)
 
 @app.route("/stories", methods=["GET"])
 def get_stories():
-    stories_directory = config.stories_dir
-    # List subdirectories under the stories_directory
-    story_dirs = [d for d in os.listdir(stories_directory) if os.path.isdir(os.path.join(stories_directory, d))]
-    return jsonify(story_dirs)
+    mock_data = [
+        {"Id":"d34c515d-4eb2-4a76-b878-da6d2a4d45c6", "Title": "The Tortoise and the Hare", "Summary": "Overconfidence leads the fast hare to lose a race to the steady tortoise."},
+        {"Id":"926dcbde-3f37-4284-89a6-f0953a2292be","Title": "The Lion and the Mouse", "Summary": "A small mouse saves a lion, proving that even the weak can help the strong."},
+        {"Id":"d4a3f22d-5c91-40c9-803d-9b58cb80ddd9","Title": "The Wolf And The Lamb", "Summary": "A wolf uses false accusations to justify eating an innocent lamb."}
+    ]
+    
+    return jsonify(mock_data)
+
 
 @app.route("/stories", methods=["POST"])
 def create_story():
