@@ -1,11 +1,21 @@
 import os
 import json
-import uuid
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
+from mimetypes import guess_type
 from config import config
 from pipeline import Pipeline
 from pipelinecontext import PipelineContext
 app = Flask(__name__)
+
+@app.route("/stories/<story_id>/<chapter_number>/assets/<filename>", methods=["GET"])
+def serve_chapter_asset(story_id, chapter_number, filename):
+    chapter_path = os.path.join(config.server_root, config.stories_dir, story_id, chapter_number)
+    
+    if not os.path.exists(chapter_path):
+        return jsonify({"error": "Chapter not found."}), 404
+
+    return send_from_directory(chapter_path, filename, as_attachment=True, mimetype=guess_type(filename)[0])
+
 
 @app.route("/stories/<story_id>", methods=["GET"])
 def get_chapters_from_disk(story_id):
