@@ -2,7 +2,7 @@ import json
 import os
 import dotenv
 import openai
-from pipeline.stage import Stage
+from stage import Stage
 
 class Scene:
     def __init__(self, title, content, start_index, end_index):

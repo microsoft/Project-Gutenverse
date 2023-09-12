@@ -2,7 +2,7 @@ import openai
 import dotenv
 import os
 import json
-from pipeline.stage import Stage
+from stage import Stage
 from config import config
 
 class AnalyzerStage(Stage):

@@ -1,7 +1,7 @@
 import os
 import json
-from pipeline.analyzerstage import AnalyzerStage
-from pipeline.segmentationstage import SegmentationStage
+from analyzerstage import AnalyzerStage
+from segmentationstage import SegmentationStage
 from config import config
 
 class Pipeline:
