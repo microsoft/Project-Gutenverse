@@ -12,4 +12,4 @@
 
 To test the client - run npm start in /client
 
-To test the server - run python app.py (starts the web services)
+To test the server - run python run.py (starts the web services)
