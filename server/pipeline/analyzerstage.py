@@ -31,16 +31,15 @@ class AnalyzerStage(Stage):
     
     def save_response_output(self, response_payload, context, sceneIndex):
         filename = "1_analysis_stage.json"
-        file = os.path.join(context.filepath + '//' + str(sceneIndex), filename)
-        
+        scene_dir = os.path.join(config.server_root, config.stories_dir, context.id, str(sceneIndex))
+        file = os.path.join(scene_dir, filename)
+        os.makedirs(scene_dir)
         # Convert the string representation of JSON to a Python dictionary
         json_data = json.loads(response_payload)
         
         with open(file, "w") as f:
             json.dump(json_data, f, indent=4)
 
-
-    
     def create_analysis_prompt(self, story_data):
         file_path = os.path.join(".\server\pipeline\prompts", "analyzer_stage_prompt.txt")
         

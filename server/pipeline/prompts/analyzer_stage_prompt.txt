@@ -26,6 +26,8 @@ Please use JSON as the output format and use specifics for descriptions rather t
   }
 }
 
+Though please avoid using any line breaks in the JSON formatting.
+
 Below is the text to parse:
 
 {{story_data}}

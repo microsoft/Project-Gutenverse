@@ -29,6 +29,8 @@ Please use JSON as the output format to aggregate a collection of scene(s).  Her
   ]
 }
 
+Though please avoid using any line breaks in the JSON formatting.
+
 Below is the text to parse:
 
 {{story_data}}

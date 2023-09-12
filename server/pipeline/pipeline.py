@@ -16,10 +16,11 @@ class Pipeline:
 
     def execute(self, context):
         # make job directory
-        subfolder = os.path.join(os.path.abspath("."), config.stories_dir , context.id)
+        subfolder = os.path.join(config.server_root, config.stories_dir , context.id)
         os.makedirs(subfolder)
-        context.filepath = subfolder
-        with open(os.path.join(context.filepath, 'story.json'), 'w') as f:
+        story_path = os.path.join(config.server_root, config.stories_dir, context.id, 'story.json')
+
+        with open(story_path, 'w') as f:
             json.dump({
                 "id" : context.id,
                 "title" : context.title,
