@@ -19,5 +19,3 @@ def create_story():
     # todo: refactor to run pipeline with the new story payload
 
     return jsonify({"guid": new_guid}), 201
-
-
