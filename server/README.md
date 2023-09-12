@@ -47,6 +47,8 @@ A simple Flask application that provides an API to manage stories. Stories are s
 1. Run the Flask application:
     ```
     python app.py
+    or 
+    flask --app server/run run --debug
     ```
 
 2. Open a web browser or use a tool like Postman to interact with the API. The server will be running at `http://localhost:5000/`.
