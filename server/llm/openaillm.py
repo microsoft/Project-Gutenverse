@@ -17,7 +17,7 @@ class OpenAiLLM:
             return file.read()
         
     def _get_analysis_prompt(self):
-        file_path = os.path.join(".\server\pipeline\prompts", "analyzer_stage_prompt.txt")
+        file_path = os.path.join(config.server_root, "pipeline\\prompts\\analyzer_stage_prompt.txt")
         
         with open(file_path, 'r') as file:
             return file.read()
