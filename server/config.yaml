@@ -1,2 +1,2 @@
-stories_dir: "server\\stories"
+stories_dir: "stories"
 OpenAIApiKey: "EnviromentVariables"

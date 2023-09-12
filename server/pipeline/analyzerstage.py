@@ -31,7 +31,7 @@ class AnalyzerStage(Stage):
     
     def save_response_output(self, response_payload, context, sceneIndex):
         filename = "1_analysis_stage.json"
-        file = os.path.join(context.filepath + '//' + str(sceneIndex), filename)
+        file = os.path.join(config.server_root, config.stories_dir, + '//' + str(sceneIndex), filename)
         
         # Convert the string representation of JSON to a Python dictionary
         json_data = json.loads(response_payload)
