@@ -1,7 +1,8 @@
 import os
 import json
-from analyzerstage import AnalyzerStage
-from segmentationstage import SegmentationStage
+from pipeline.analyzerstage import AnalyzerStage
+from pipeline.segmentationstage import SegmentationStage
+from config import config
 
 class Pipeline:
     def __init__(self):
@@ -15,9 +16,9 @@ class Pipeline:
 
     def execute(self, context):
         # make job directory
-        subfolder = os.path.join(os.path.abspath(".") + "\\stories", context.id)
+        subfolder = os.path.join(os.path.abspath("."), config.stories_dir , context.id)
         os.makedirs(subfolder)
-        context.filepath = os.path.abspath(subfolder)
+        context.filepath = subfolder
         with open(os.path.join(context.filepath, 'story.json'), 'w') as f:
             json.dump({
                 "id" : context.id,

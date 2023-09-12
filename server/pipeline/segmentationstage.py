@@ -2,7 +2,7 @@ import json
 import os
 import dotenv
 import openai
-from stage import Stage
+from pipeline.stage import Stage
 
 class Scene:
     def __init__(self, title, content, start_index, end_index):
@@ -66,7 +66,7 @@ class SegmentationStage(Stage):
             analysis.scenes.append(scene)
 
     def create_segmentation_prompt(self, story_data):
-        file_path = os.path.join(".\pipeline\prompts", "segmentation_stage_prompt.txt")
+        file_path = os.path.join(".\server\pipeline\prompts", "segmentation_stage_prompt.txt")
         
         with open(file_path, 'r') as file:
             content = file.read()

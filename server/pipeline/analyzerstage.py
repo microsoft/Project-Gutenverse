@@ -2,7 +2,8 @@ import openai
 import dotenv
 import os
 import json
-from stage import Stage
+from pipeline.stage import Stage
+from config import config
 
 class AnalyzerStage(Stage):
     def process(self, context):
@@ -41,7 +42,7 @@ class AnalyzerStage(Stage):
 
     
     def create_analysis_prompt(self, story_data):
-        file_path = os.path.join(".\pipeline\prompts", "analyzer_stage_prompt.txt")
+        file_path = os.path.join(".\server\pipeline\prompts", "analyzer_stage_prompt.txt")
         
         with open(file_path, 'r') as file:
             content = file.read()
