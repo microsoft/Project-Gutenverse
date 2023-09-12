@@ -12,6 +12,13 @@ export class Player {
     public nextSceneButton?: Control;
     public currentTextIndex = 0;
 
+    public settingsModal?: Control;
+    public closeSettingsButton?: Control;
+    public backgroundMusicSlider?: Control;
+    public storyNarrationSlider?: Control;
+    public openSettingsButton?: Control;
+    public isSettingsOpen!: Boolean;
+
     constructor(public scene: Scene, public textToPlay: TextFormat[], public previousScene?: string, public nextScene?: string) {
         AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#2").then((gui) => {
             this.speechBubble = gui.getControlByName("SpeechBlock")!;
@@ -51,6 +58,29 @@ export class Player {
                 });
             }
             this.updateText();
+        });
+
+        this.isSettingsOpen = false;
+        AdvancedDynamicTexture.ParseFromSnippetAsync("#JF6IFS#5").then((gui) => {
+            this.settingsModal = gui.getControlByName("SettingsModal")!;
+            this.settingsModal.isVisible = false;
+
+            this.openSettingsButton = gui.getControlByName("OpenSettings")!;
+            this.openSettingsButton.onPointerUpObservable.add(() => {
+                console.log('clicked on open settings');
+                if (this.settingsModal) {
+                    this.settingsModal.isVisible = true;
+                }
+            });
+
+            this.closeSettingsButton = gui.getControlByName("CloseSettings")!;
+            this.closeSettingsButton.onPointerUpObservable.add(() => {
+                console.log('clicked on close settings');
+                if (this.settingsModal) {
+                    this.settingsModal.isVisible = false;
+                }
+            });
+
         });
     }
 
