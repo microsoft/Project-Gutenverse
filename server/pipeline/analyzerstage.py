@@ -33,7 +33,7 @@ class AnalyzerStage(Stage):
         filename = "1_analysis_stage.json"
         scene_dir = os.path.join(config.server_root, config.stories_dir, context.id, str(sceneIndex))
         file = os.path.join(scene_dir, filename)
-        os.makedirs(scene_dir)
+
         # Convert the string representation of JSON to a Python dictionary
         json_data = json.loads(response_payload)
         
