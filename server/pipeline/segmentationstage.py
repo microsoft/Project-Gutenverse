@@ -42,7 +42,7 @@ class SegmentationStage(Stage):
 
         # Save scenes to JSON files
         for i, scene in enumerate(analysis.scenes):
-            scene_folder = os.path.join(config.stories_dir, config.server_root, + '//' + str(i))
+            scene_folder = os.path.join(config.server_root, config.stories_dir, context.id, str(i))
             os.makedirs(scene_folder, exist_ok=True)
             with open(os.path.join(scene_folder, 'scene.json'), 'w') as f:
                 json.dump({
