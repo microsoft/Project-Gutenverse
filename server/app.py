@@ -7,6 +7,47 @@ from pipeline import Pipeline
 from pipelinecontext import PipelineContext
 app = Flask(__name__)
 
+@app.route("/stories/<story_id>", methods=["GET"])
+def get_chapters_from_disk(story_id):
+    story_path = os.path.join(config.server_root, config.stories_dir, story_id)
+    if not os.path.exists(story_path):
+        return jsonify({"error": "Story not found."}), 404
+    
+    chapters = []
+    chapter_dirs = sorted([d for d in os.listdir(story_path) if os.path.isdir(os.path.join(story_path, d)) and d.isdigit()], key=int)
+    
+    for chapter_dir in chapter_dirs:
+        scene_file_path = os.path.join(story_path, chapter_dir, "scene.json")
+        if os.path.exists(scene_file_path):
+            with open(scene_file_path, "r") as file:
+                data = json.load(file)
+                chapters.append({
+                    "Title": data.get("title", ""),
+                    "Chapter": chapter_dir
+                })
+    
+    return jsonify(chapters)
+
+@app.route("/stories/disk", methods=["GET"])
+def get_stories_from_disk():
+    stories_dir = os.path.join(config.server_root, config.stories_dir)
+    if not os.path.exists(stories_dir):
+        return jsonify([])
+    subfolders = [os.path.join(stories_dir, d) for d in os.listdir(stories_dir) if os.path.isdir(os.path.join(stories_dir, d))]
+    if not subfolders:
+        return jsonify([])
+    stories_collection = []
+    for folder in subfolders:
+        stories_file = os.path.join(folder, "story.json")
+        if os.path.exists(stories_file):
+            with open(stories_file, "r") as file:
+                data = json.load(file)
+                stories_collection.append({
+                    "Id": data["id"],
+                    "Title": data["title"]
+                })
+    return jsonify(stories_collection)
+
 @app.route("/stories", methods=["GET"])
 def get_stories():
     mock_data = [
@@ -16,7 +57,6 @@ def get_stories():
     ]
     
     return jsonify(mock_data)
-
 
 @app.route("/stories", methods=["POST"])
 def create_story():
