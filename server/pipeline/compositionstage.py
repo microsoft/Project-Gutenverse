@@ -35,9 +35,10 @@ class CompositionStage(Stage):
                         
                         character_composition_data['characters'][character_name] = {
                             "distance_from_camera": 1,
+                            "distance_from_the_center_in_degree": 0,
                             "distance_from_the_floor": 0,
-                            "distance_from_the_center_in_angle": 0,
-                            "scale": 1,
+                            "scale_x": 1,
+                            "scale_y": 1,
                         }
                     
                     # Save the aggregated data to a new JSON file in the current subfolder
