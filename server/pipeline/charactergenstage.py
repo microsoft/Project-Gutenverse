@@ -60,6 +60,8 @@ class CharacterGenStage(Stage):
                     with open(save_file_path, 'w') as output_file:
                         json.dump(character_gen_data, output_file, indent=4)
 
+        return context
+
     def generate_image(self, subfolder_path, character_name, appearance):
         filename = f"{character_name.replace(' ', '')}.png"
         prompt = appearance
