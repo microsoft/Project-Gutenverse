@@ -6,8 +6,14 @@ from config import config
 from pipeline import Pipeline
 from pipeline import PipelineContext
 from db import DB
+from loguru import logger
+from bson import ObjectId
 
 app = Flask(__name__)
+
+@app.before_request
+def log_request_info():
+    logger.info(f'{request.url_rule.rule=}\n{request.headers=}\n')
 
 @app.route("/stories/<story_id>/<chapter_number>/assets/<filename>", methods=["GET"])
 def serve_chapter_asset(story_id, chapter_number, filename):
@@ -82,14 +88,8 @@ def get_stories_from_disk():
 
 @app.route("/stories", methods=["GET"])
 def get_stories():
-    mock_data = [
-        {"Id":"d34c515d-4eb2-4a76-b878-da6d2a4d45c6", "Title": "The Tortoise and the Hare", "Summary": "Overconfidence leads the fast hare to lose a race to the steady tortoise."},
-        {"Id":"926dcbde-3f37-4284-89a6-f0953a2292be","Title": "The Lion and the Mouse", "Summary": "A small mouse saves a lion, proving that even the weak can help the strong."},
-        {"Id":"d4a3f22d-5c91-40c9-803d-9b58cb80ddd9","Title": "The Wolf And The Lamb", "Summary": "A wolf uses false accusations to justify eating an innocent lamb."}
-    ]
+    return [x for x in DB.get_all_stories() if type(x['_id']) is not ObjectId ]
     
-    return jsonify(mock_data)
-
 @app.route("/stories", methods=["POST"])
 def create_story():
     data = request.get_json()
@@ -113,10 +113,35 @@ def upload_story():
     return {"guid": context.id}, 201
 
 def process_story(title, story_data):
+    DB.add_story_to_psuedo_index(title)
     context = PipelineContext(title=title, story_data=story_data)    
     pipeline = Pipeline()
     pipeline.execute(context)
     return context
+
+@app.route("/AdminApi/ManualCrawl")
+def manual_update_db():
+    stories_dir = os.path.join(config.server_root, config.stories_dir)
+    if not os.path.exists(stories_dir):
+        logger.warning(f"There are no stories to manually insert. Look at {stories_dir}")
+        return
+    subfolders = [os.path.join(stories_dir, d) for d in os.listdir(stories_dir) if os.path.isdir(os.path.join(stories_dir, d))]
+    if not subfolders:
+        return []
+    for folder in subfolders:
+        stories_file = os.path.join(folder, "story.json")
+        if os.path.exists(stories_file):
+            with open(stories_file, "r") as file:
+                data = json.load(file)
+                DB.add_story_to_psuedo_index(data["title"], data["id"])
+    return "Success"
+
+@app.route("/AdminApi/RemoveBadDocuments")
+def remove_bad_documents():
+    DB.delete_bad_stories()
+    return "Success"
+
+
 
 # Create the stories directory if it doesn't exist
 if not os.path.exists(config.stories_dir):

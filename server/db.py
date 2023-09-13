@@ -1,7 +1,8 @@
 from datetime import datetime
+from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.errors import WriteError, OperationFailure, ServerSelectionTimeoutError
-
+from utilities import story_title_to_hash
 class DB:
     # Static DB connection
     connection = None
@@ -19,17 +20,18 @@ class DB:
             print(f"An unexpected error occurred: {e}")
 
     @staticmethod
-    def create_story(title, path):
-        story = None
+    def add_story_to_psuedo_index(title, id_=None):
+        if not id_:
+            id_ = story_title_to_hash(title)
         try:
             created_date = datetime.now()
             story = {
                 "Title": title,
-                "Path": path,
+                "Id": id_,
+                "_id": id_,
                 "CreatedDate": created_date
             }
-            new_story_id = DB.connection["Stories"].insert_one(story)
-            story["_id"] = new_story_id.inserted_id
+            new_story_id = DB.connection["Stories"].update_one({"_id": id_}, {'$set': story}, upsert=True)
         except WriteError as e:
             print(f"Insertion into MongoDB failed: {e}")
         except ServerSelectionTimeoutError as e:
@@ -38,6 +40,13 @@ class DB:
             print(f"An unexpected error occurred: {e}")
 
         return story
+
+    @staticmethod
+    def delete_bad_stories():
+        bad_stories = [x for x in DB.get_all_stories() if type(x['_id']) is ObjectId ]
+        for bad_story in bad_stories:
+            DB.connection["Stories"].delete_one({"_id": bad_story["_id"]})
+        
 
     @staticmethod
     def get_all_stories():
