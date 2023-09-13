@@ -6,14 +6,16 @@ from charactergenstage import CharacterGenStage
 from skyboxgenstage import SkyboxGenStage
 from stage import Stage
 from config import config
+from llm import KandinskyLLM
 
 class Pipeline:
     def __init__(self):
+        self.imageGenLLM = KandinskyLLM()
         self.stages = [
             SegmentationStage(),
             AnalyzerStage(),
-            CharacterGenStage(),
-            SkyboxGenStage()
+            CharacterGenStage(self.imageGenLLM),
+            SkyboxGenStage(self.imageGenLLM)
         ]
 
     def _teardown_all_stage_checkpoints(self):
