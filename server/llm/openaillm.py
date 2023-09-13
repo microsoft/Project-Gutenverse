@@ -22,8 +22,8 @@ class OpenAiLLM:
         with open(file_path, 'r') as file:
             return file.read()
         
-    def analize_scene(self, scene: str) -> str:
-        analyzer_prompt = self.analysis_prompt.replace("{{story_data}}", scene["body"])
+    def analize_scene(self, scene) -> str:
+        analyzer_prompt = self.analysis_prompt.replace("{{story_data}}", scene.body)
         output = openai.ChatCompletion.create(
                 model = "gpt-3.5-turbo-16k",
                 messages=[{
