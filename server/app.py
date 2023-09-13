@@ -1,6 +1,7 @@
 import os
 import json
 from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
 from mimetypes import guess_type
 from config import config
 from pipeline import Pipeline
@@ -8,6 +9,7 @@ from pipeline import PipelineContext
 from db import DB
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/stories/<story_id>/<chapter_number>/assets/<filename>", methods=["GET"])
 def serve_chapter_asset(story_id, chapter_number, filename):

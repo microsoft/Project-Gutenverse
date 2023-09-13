@@ -99,17 +99,37 @@ export class StartScreen implements SceneClass {
 
             const stackButtonContainer = gui.getControlByName("StackPanel_StoryButtons")! as StackPanel;
 
-            // TODO: Replace using real data
-            for (var i = 0; i < 8; i++) {
-                var button = Button.CreateSimpleButton("Title" + i, "Title: " + i);
-                button.width = "95.00%";
-                button.height = "60.00px";
-                button.color = "white";
-                button.background = "black";
-                stackButtonContainer.addControl(button);
-            }
-
-
+            // TODO: Replace using real data 
+            // Fetching stories from the web service
+            const storyRequest = fetch("http://127.0.0.1:5000/stories/disk");
+            storyRequest.then(response => {
+                if (!response.ok) {
+                    throw new Error("Failed to fetch stories.");
+                }
+                const storiesPromise = response.json();
+                storiesPromise.then(stories => {
+                    // Assuming there's a container (like a StackPanel or other container control) where you want to add the buttons
+                    const storyButtonContainer = new StackPanel();
+        
+                    //Iterating through the fetched stories and creating buttons
+                    stories.forEach((story: {Id: string, Title: string} )=> {
+                        const storyButton = Button.CreateSimpleButton(story.Id, story.Title);
+                        storyButton.width = "95%";
+                        storyButton.height = "60px";
+                        storyButton.color = "white";
+                        storyButton.background = "black";  // Modify the appearance as needed
+                        storyButton.onPointerUpObservable.add(() => {
+                            // Add your on-click logic here. For instance, navigating to the story scene.
+                        });
+        
+                        storyButtonContainer.addControl(storyButton);
+                    });
+                    // Assuming you have a GUI texture where you want to add the container
+                    stackButtonContainer.addControl(storyButtonContainer);    
+                })
+                
+            });
+            
             // === CREATE STORY MENU ===
 
             // Setup the buttons in the Create Story menu
