@@ -1,26 +1,16 @@
-import { Tools } from "@babylonjs/core";
-import { Vector3 } from "@babylonjs/core/Maths/math.vector";
-
-
-import "@babylonjs/core/Loading/loadingScreen";
-import "@babylonjs/loaders/glTF";
-import "@babylonjs/core/Materials/standardMaterial";
-import "@babylonjs/core/Materials/Textures/Loaders/envTextureLoader";
-
-
-
 import { BasicStorybookScene } from "./basicStorybookScene";
 
 import princessPenguinUrl from "../../assets/characters/princesspenguin.png";
 import dragonUrl from "../../assets/characters/dragon.png";
 import environmentUrl from "../../assets/environment/blockade_env.png";
+import soundUrl from "../../assets/audio/Kevin_MacLeod_The_Forest_and_the_Trees.mp3";
 
 export class PrincessAndDragonScene extends BasicStorybookScene {
     constructor() {
         super();
         this.characters = [
-            {name: "Princess", imageUrl: princessPenguinUrl, position: new Vector3(-8, -5.21, -0.95), rotation: new Vector3(0, Tools.ToRadians(-63.59), 0)},
-            {name: "Dragon", imageUrl: dragonUrl, position: new Vector3(-14.78, -3.28, 3.63), rotation: new Vector3(0, Tools.ToRadians(298), 0)},
+            {name: "Princess", imageUrl: princessPenguinUrl, distanceFromCamera: 60, angularDistanceFromCamera: -7, width: 5, height: 7.2, distanceFromGround: 0},
+            {name: "Dragon", imageUrl: dragonUrl, distanceFromCamera: 60, angularDistanceFromCamera: 7, width: 10, height: 14.2, distanceFromGround: 0},
         ];
         this.speech = [
             {character: "Princess", text: "Hello, I am the princess!"},
@@ -33,6 +23,7 @@ export class PrincessAndDragonScene extends BasicStorybookScene {
         ];
         this.envUrl = environmentUrl;
         this.nextScene = "princessAndDragon2";
+        this.soundUrl = soundUrl;
     }
 }
 

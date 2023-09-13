@@ -1,4 +1,4 @@
-import {Scene} from "@babylonjs/core";
+import {Scene, Sound} from "@babylonjs/core";
 import {AdvancedDynamicTexture, Control, TextBlock} from "@babylonjs/gui";
 
 export type TextFormat = {character: string, text: string};
@@ -11,9 +11,12 @@ export class Player {
     public previousSceneButton?: Control;
     public nextSceneButton?: Control;
     public currentTextIndex = 0;
+    public playSoundButton?: Control;
+    public stopSoundButton?: Control;
 
-    constructor(public scene: Scene, public textToPlay: TextFormat[], public previousScene?: string, public nextScene?: string) {
-        AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#2").then((gui) => {
+    constructor(public scene: Scene, public textToPlay: TextFormat[], public previousScene?: string, public nextScene?: string, public sound?: Sound) {
+        AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#5").then((gui) => {
+            gui.layer!.applyPostProcess = false;
             this.speechBubble = gui.getControlByName("SpeechBlock")!;
             this.forwardButton = gui.getControlByName("Foward")!;
             this.forwardButton.onPointerUpObservable.add(() => {
@@ -51,6 +54,22 @@ export class Player {
                 });
             }
             this.updateText();
+
+            this.playSoundButton = gui.getControlByName("PlaySound")!;
+            this.stopSoundButton = gui.getControlByName("StopSound")!;
+            if (!this.sound) {
+                this.playSoundButton.isVisible = false;
+                this.stopSoundButton.isVisible = false;
+            } else {
+                this.playSoundButton.onPointerUpObservable.add(() => {
+                    console.log('clicked on play sound button');
+                    this.sound!.play();
+                });
+                this.stopSoundButton.onPointerUpObservable.add(() => {
+                    console.log('clicked on stop sound button');
+                    this.sound!.stop();
+                });
+            }
         });
     }
 

@@ -1,8 +1,11 @@
 import {
+    Camera,
     Mesh,
     MeshBuilder,
     NodeMaterial,
+    Quaternion,
     Scene,
+    ShadowDepthWrapper,
     ShadowGenerator,
     StandardMaterial,
     Texture,
@@ -11,14 +14,14 @@ import {
     Vector3,
 } from "@babylonjs/core";
 
-import paperBg from "../../assets/paperbg.jpg";
-import backgroundGround from "../../assets/backgroundGround.png";
-
 export type CharacterData = {
     name: string;
     imageUrl: string;
-    position: Vector3;
-    rotation: Vector3;
+    distanceFromCamera: number;
+    angularDistanceFromCamera: number;
+    width: number;
+    height: number;
+    distanceFromGround: number;
 };
 
 export class Character {
@@ -29,39 +32,61 @@ export class Character {
         public shadowGenerator: ShadowGenerator
     ) {}
 
-    async build() {
+    async build(camera: Camera) {
         const sprite1 = MeshBuilder.CreatePlane(
-            "sprite1",
-            { width: 5, height: 7.2 },
+            this.data.name,
+            { width: this.data.width, height: this.data.height },
             this.scene
         );
-        const material1 = await NodeMaterial.ParseFromSnippetAsync("#4HTEHD#5");
+        const material1 = await NodeMaterial.ParseFromSnippetAsync("#0HR986#1");
         const inputTex = new Texture(this.data.imageUrl, this.scene);
         const texBlock = material1.getBlockByName("Texture") as TextureBlock;
         texBlock.texture = inputTex;
         material1.backFaceCulling = false;
+        const worldPosVarName = (material1.getBlockByName("WorldPos")! as any)
+            .output.associatedVariableName;
+        const alphaVarName = (material1.getBlockByName("myalpha")! as any)
+            .output.associatedVariableName;
+
+        material1.shadowDepthWrapper = new ShadowDepthWrapper(
+            material1,
+            this.scene,
+            {
+                remappedVariables: [
+                    "worldPos",
+                    worldPosVarName,
+                    "alpha",
+                    alphaVarName,
+                ],
+            }
+        );
         sprite1.material = material1;
         material1.build(true);
 
-        sprite1.position.z = 2;
         this.shadowGenerator.addShadowCaster(sprite1);
 
-        const shadowFloor = MeshBuilder.CreateGround(
-            "floor",
-            { width: 5, height: 5 },
-            this.scene
-        );
-        const floorMat = new StandardMaterial("floorMat", this.scene);
-        floorMat.emissiveTexture = new Texture(paperBg, this.scene);
-        floorMat.opacityTexture = new Texture(backgroundGround, this.scene);
-        shadowFloor.material = floorMat;
-        shadowFloor.receiveShadows = true;
-        shadowFloor.position.set(0, -2.65, 0);
-        shadowFloor.parent = sprite1;
+        sprite1.renderingGroupId = 1;
 
         this.sprite = sprite1;
 
-        this.sprite.position = this.data.position;
-        this.sprite.rotation = this.data.rotation;
+        // calculate position to place sprite
+        const cameraDirection = camera.getDirection(new Vector3(0, 0, 1));
+        cameraDirection.y = 0;
+
+        const rotatedCameraDirection = cameraDirection.applyRotationQuaternion(
+            Quaternion.FromEulerAngles(
+                0,
+                Tools.ToRadians(this.data.angularDistanceFromCamera),
+                0
+            )
+        );
+        this.sprite.position = new Vector3(
+            camera.position.x,
+            0,
+            camera.position.z
+        ).add(rotatedCameraDirection.scale(this.data.distanceFromCamera));
+
+        this.sprite.position.y +=
+            this.data.distanceFromGround + this.data.height / 2;
     }
 }
