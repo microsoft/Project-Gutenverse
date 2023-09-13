@@ -3,6 +3,7 @@ import json
 from analyzerstage import AnalyzerStage
 from segmentationstage import SegmentationStage
 from charactergenstage import CharacterGenStage
+from compositionstage import CompositionStage
 from config import config
 
 class Pipeline:
@@ -10,7 +11,8 @@ class Pipeline:
         self.stages = [
             SegmentationStage(),
             AnalyzerStage(),
-            CharacterGenStage()
+            CharacterGenStage(),
+            CompositionStage()
         ]
 
     def add_stage(self, stage):
