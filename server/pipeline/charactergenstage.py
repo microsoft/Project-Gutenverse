@@ -30,7 +30,8 @@ class CharacterGenStage(Stage):
 
             save_file_path = os.path.join(subfolder_path, '2_charactergen_stage.json')
             if os.path.isfile(save_file_path):
-                logger.info(f"{self} step found to be already completed")
+                logger.info(f"{self} step found to be already completed for " + subfolder)
+                continue
             
             # Check if the path is a directory and contains the required JSON file
             if os.path.isdir(subfolder_path) and '1_analysis_stage.json' in os.listdir(subfolder_path):
@@ -65,7 +66,6 @@ class CharacterGenStage(Stage):
                     with open(save_file_path, 'w') as output_file:
                         json.dump(character_gen_data, output_file, indent=4)
             
-            return context
 
         return context
 
