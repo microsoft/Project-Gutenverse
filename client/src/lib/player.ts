@@ -1,4 +1,4 @@
-import {Scene, Sound} from "@babylonjs/core";
+import {Nullable, Scene, Sound} from "@babylonjs/core";
 import {AdvancedDynamicTexture, Control, TextBlock, ImageBasedSlider} from "@babylonjs/gui";
 import { Callback } from "../createScene";
 
@@ -12,16 +12,19 @@ export class Player {
     public previousSceneButton?: Control;
     public nextSceneButton?: Control;
     public currentTextIndex = 0;
-    public playSoundButton?: Control;
-    public stopSoundButton?: Control;
+    public playSoundButton?: Nullable<Control>;
+    public stopSoundButton?: Nullable<Control>;
     public openSettingsButton?: Control;
     public settingsModal?: Control;
     public closeSettingsButton?: Control;
     public backgroundMusicSlider?: ImageBasedSlider;
     public storyNarrationSlider?: ImageBasedSlider;
+    public speechGui?: AdvancedDynamicTexture;
+    public isSoundPlaying = true;
 
     constructor(public scene: Scene, public textToPlay: TextFormat[], public previousSceneCallback?: Callback, public nextSceneCallback?: Callback, public sound?: Sound) {
-        AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#6").then((gui) => {
+        AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#8").then((gui) => {
+            this.speechGui = gui;
             gui.layer!.applyPostProcess = false;
             this.speechBubble = gui.getControlByName("SpeechBlock")!;
             this.forwardButton = gui.getControlByName("Foward")!;
@@ -46,9 +49,12 @@ export class Player {
             if (!previousSceneCallback) {
                 this.previousSceneButton.isVisible = false;
             } else {
+                console.log('set previous scene callback');
                 this.previousSceneButton.onPointerUpObservable.add(() => {
                     console.log('clicked on previous scene button');
+                    this.previousSceneButton!.isEnabled = false;
                     this.previousSceneCallback!();
+                    this.previousSceneButton!.isEnabled = true;
                 });
             }
             this.nextSceneButton = gui.getControlByName("NextScene")!;
@@ -56,28 +62,17 @@ export class Player {
             if (!nextSceneCallback) {
                 this.nextSceneButton.isVisible = false;
             } else {
+                console.log("set next scene callback");
                 this.nextSceneButton.onPointerUpObservable.add(() => {
                     console.log('clicked on next scene button');
+                    this.nextSceneButton!.isEnabled = false;
                     this.nextSceneCallback!();
+                    this.nextSceneButton!.isEnabled = true;
                 });
             }
             this.updateText();
 
-            // this.playSoundButton = gui.getControlByName("PlaySound")!;
-            // this.stopSoundButton = gui.getControlByName("StopSound")!;
-            // if (!this.sound) {
-            //     this.playSoundButton.isVisible = false;
-            //     this.stopSoundButton.isVisible = false;
-            // } else {
-            //     this.playSoundButton.onPointerUpObservable.add(() => {
-            //         console.log('clicked on play sound button');
-            //         this.sound!.play();
-            //     });
-            //     this.stopSoundButton.onPointerUpObservable.add(() => {
-            //         console.log('clicked on stop sound button');
-            //         this.sound!.stop();
-            //     });
-            // }
+            
         });
 
         AdvancedDynamicTexture.ParseFromSnippetAsync("#JF6IFS#7").then((gui) => {
@@ -117,9 +112,31 @@ export class Player {
         });
     }
 
-    replaceScene(sceneName: string) {
-        const currentLoc = window.location.href.split("?")[0];
-        window.location.href = `${currentLoc}?scene=${sceneName}`;
+    updateSound = (sound: Sound) => {
+        this.sound = sound;
+        this.playSoundButton = this.speechGui?.getControlByName("PlaySound");
+        this.stopSoundButton = this.speechGui?.getControlByName("StopSound");
+        if (!this.playSoundButton || !this.stopSoundButton) {
+            return;
+        }
+        if (!this.sound) {
+            this.playSoundButton.isVisible = false;
+            this.stopSoundButton.isVisible = false;
+        } else {
+            console.log('set up play and stop sound button');
+            this.playSoundButton.onPointerUpObservable.add(() => {
+                if (!this.isSoundPlaying) {
+                    console.log('clicked on play sound button');
+                    this.sound!.play();
+                    this.isSoundPlaying = true;
+                }
+            });
+            this.stopSoundButton.onPointerUpObservable.add(() => {
+                console.log('clicked on stop sound button');
+                this.sound!.stop();
+                this.isSoundPlaying = false;
+            });
+        }
     }
 
     updateText() {
