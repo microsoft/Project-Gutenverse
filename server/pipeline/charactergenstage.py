@@ -4,11 +4,11 @@ from config import config
 from rembg import remove
 import json
 import os
-from llm import KandinskyLLM
+from llm import *
 
 class CharacterGenStage(Stage):
     def __init__(self) -> None:
-        self.imageGenLLM = KandinskyLLM()
+        self.imageGenLLM = DalleLLM()
         super().__init__()
 
     def __init__(self, imageGenLLM) -> None:

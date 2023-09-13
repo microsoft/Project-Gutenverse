@@ -1,5 +1,6 @@
 import {Scene, Sound} from "@babylonjs/core";
 import {AdvancedDynamicTexture, Control, TextBlock, ImageBasedSlider} from "@babylonjs/gui";
+import { Callback } from "../createScene";
 
 export type TextFormat = {character: string, text: string};
 
@@ -19,9 +20,11 @@ export class Player {
     public backgroundMusicSlider?: ImageBasedSlider;
     public storyNarrationSlider?: ImageBasedSlider;
 
-    constructor(public scene: Scene, public textToPlay: TextFormat[], public previousScene?: string, public nextScene?: string, public sound?: Sound) {
-        AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#5").then((gui) => {
+    constructor(public scene: Scene, public textToPlay: TextFormat[], public previousSceneCallback?: Callback, public nextSceneCallback?: Callback, public sound?: Sound) {
+        AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#12").then((gui) => {
             gui.layer!.applyPostProcess = false;
+            this.openSettingsButton = gui.getControlByName("OpenSettings")!;
+
             this.speechBubble = gui.getControlByName("SpeechBlock")!;
             this.forwardButton = gui.getControlByName("Foward")!;
             this.forwardButton.onPointerUpObservable.add(() => {
@@ -41,49 +44,79 @@ export class Player {
             });
             this.text = gui.getControlByName("Text")! as TextBlock;
             this.previousSceneButton = gui.getControlByName("PreviousScene")!;
-            if (!previousScene) {
+            console.log('previous scene button', this.previousSceneButton);
+            if (!previousSceneCallback) {
                 this.previousSceneButton.isVisible = false;
             } else {
                 this.previousSceneButton.onPointerUpObservable.add(() => {
                     console.log('clicked on previous scene button');
-                    this.replaceScene(previousScene);
+                    this.previousSceneCallback!();
                 });
             }
             this.nextSceneButton = gui.getControlByName("NextScene")!;
-            if (!nextScene) {
+            console.log('next scene button', this.nextSceneButton);
+            if (!nextSceneCallback) {
                 this.nextSceneButton.isVisible = false;
             } else {
                 this.nextSceneButton.onPointerUpObservable.add(() => {
                     console.log('clicked on next scene button');
-                    this.replaceScene(nextScene);
+                    this.nextSceneCallback!();
                 });
             }
             this.updateText();
 
-            this.playSoundButton = gui.getControlByName("PlaySound")!;
-            this.stopSoundButton = gui.getControlByName("StopSound")!;
-            if (!this.sound) {
-                this.playSoundButton.isVisible = false;
-                this.stopSoundButton.isVisible = false;
+            // Single spot for play/pause button that changes based on play/pause status
+            this.playSoundButton = gui.getControlByName("Play")!;
+            this.stopSoundButton = gui.getControlByName("Pause")!;
+
+            // adding the false in if statement for testing purposes
+            if (!this.sound && false) {
+                this.playSoundButton!.isVisible = false;
+                this.stopSoundButton!.isVisible = false;
             } else {
-                this.playSoundButton.onPointerUpObservable.add(() => {
-                    console.log('clicked on play sound button');
-                    this.sound!.play();
-                });
+                // assuming autoplay sound when scene starts
+                this.playSoundButton.isVisible = false;
+
                 this.stopSoundButton.onPointerUpObservable.add(() => {
                     console.log('clicked on stop sound button');
-                    this.sound!.stop();
+                    this.stopSoundButton!.isVisible = false;
+                    this.playSoundButton!.isVisible = true;
+                    //this.sound!.stop();
+                });
+
+                this.playSoundButton.onPointerUpObservable.add(() => {
+                    console.log('clicked on play sound button');
+                    this.playSoundButton!.isVisible = false;
+                    this.stopSoundButton!.isVisible = true;
+                    //this.sound!.play();
                 });
             }
+
+            // this.playSoundButton = gui.getControlByName("PlaySound")!;
+            // this.stopSoundButton = gui.getControlByName("StopSound")!;
+            // if (!this.sound) {
+            //     this.playSoundButton.isVisible = false;
+            //     this.stopSoundButton.isVisible = false;
+            // } else {
+            //     this.playSoundButton.onPointerUpObservable.add(() => {
+            //         console.log('clicked on play sound button');
+            //         this.sound!.play();
+            //     });
+            //     this.stopSoundButton.onPointerUpObservable.add(() => {
+            //         console.log('clicked on stop sound button');
+            //         this.sound!.stop();
+            //     });
+            // }
         });
 
-        AdvancedDynamicTexture.ParseFromSnippetAsync("#JF6IFS#7").then((gui) => {
+        AdvancedDynamicTexture.ParseFromSnippetAsync("#JF6IFS#8").then((gui) => {
+            gui.layer!.applyPostProcess = false;
+            
             this.settingsModal = gui.getControlByName("SettingsModal")!;
             this.settingsModal.isVisible = false;
 
             // Open Settings Modal
-            this.openSettingsButton = gui.getControlByName("OpenSettings")!;
-            this.openSettingsButton.onPointerUpObservable.add(() => {
+            this.openSettingsButton?.onPointerUpObservable.add(() => {
                 console.log('clicked on open settings');
                 if (this.settingsModal) {
                     this.settingsModal.isVisible = true;

@@ -5,14 +5,19 @@ from segmentationstage import SegmentationStage
 from charactergenstage import CharacterGenStage
 from skyboxgenstage import SkyboxGenStage
 from compositionstage import CompositionStage
+from skyboxgenstage import SkyboxGenStage
 from scenecompilationstage import SceneCompilationStage
 from stage import Stage
 from config import config
-from llm import KandinskyLLM
+from llm import *
 
 class Pipeline:
     def __init__(self):
-        self.imageGenLLM = KandinskyLLM()
+        if config.UseGpu:
+            self.imageGenLLM = KandinskyLLM()
+        else:
+            self.imageGenLLM = DalleLLM()
+
         self.stages = [
             SegmentationStage(),
             AnalyzerStage(),
@@ -21,6 +26,10 @@ class Pipeline:
             CompositionStage(),
             SceneCompilationStage()
         ]
+
+    def __del__(self):
+        del self.imageGenLLM
+        del self.stages
 
     def _teardown_all_stage_checkpoints(self):
         def apply_teardown(stage: Stage):

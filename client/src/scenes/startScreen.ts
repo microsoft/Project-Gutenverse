@@ -1,53 +1,27 @@
-import { Engine } from "@babylonjs/core/Engines/engine";
 import { Scene } from "@babylonjs/core/scene";
-import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
-import { Vector3 } from "@babylonjs/core/Maths/math.vector";
-import { CreateSceneClass } from "../createScene";
+import { Callback, SceneArgs, SceneClass } from "../createScene";
 import { AdvancedDynamicTexture } from "@babylonjs/gui/2D/advancedDynamicTexture";
 import { Image } from "@babylonjs/gui/2D/controls/image";
 import { TextBlock } from "@babylonjs/gui/2D/controls/textBlock";
 import { Control } from "@babylonjs/gui/2D/controls/control";
 import {Button } from "@babylonjs/gui/2D/controls/button";
 
-import menuBackgroundUrl from "../../assets/menu_background.jpg";
+import menuBackgroundUrl from "../../public/assets/menu_background.jpg";
 
-export class StartScreen implements CreateSceneClass {
-    createScene = async (
-        engine: Engine,
-        canvas: HTMLCanvasElement
+export interface StartScreenArgs {
+    chooseStoryCallback: Callback;
+}
+
+export class StartScreen implements SceneClass {
+    public gui?: AdvancedDynamicTexture;
+    constructor(public startScreenArgs: StartScreenArgs) {}
+    populate = async (
+        sceneArgs: SceneArgs
     ): Promise<Scene> => {
-        // This creates a basic Babylon Scene object (non-mesh)
-        const scene = new Scene(engine);
-
-        // void Promise.all([
-        //     import("@babylonjs/core/Debug/debugLayer"),
-        //     import("@babylonjs/inspector"),
-        // ]).then((_values) => {
-        //     console.log(_values);
-        //     scene.debugLayer.show({
-        //         handleResize: true,
-        //         overlay: true,
-        //         globalRoot: document.getElementById("#root") || undefined,
-        //     });
-        // });
-
-        // This creates and positions a free camera (non-mesh)
-        const camera = new ArcRotateCamera(
-            "my first camera",
-            0,
-            Math.PI / 3,
-            10,
-            new Vector3(0, 0, 0),
-            scene
-        );
-
-        // This targets the camera to scene origin
-        camera.setTarget(Vector3.Zero());
-
-        // This attaches the camera to the canvas
-        camera.attachControl(canvas, true);
-
+        const scene = sceneArgs.scene;
+        
         const mainMenu = AdvancedDynamicTexture.CreateFullscreenUI("UI");
+        this.gui = mainMenu;
         
         // Adding the background image to the mainMenu
         const backgroundImage = new Image("backgroundImage", menuBackgroundUrl);
@@ -84,9 +58,8 @@ export class StartScreen implements CreateSceneClass {
         }
 
         // Choose Story Button
-        createButton("chooseStory", "Choose Story", "-100px", function() {
-            //console.log("Choose Story clicked");
-            window.location.href += "?scene=princessAndDragon"; 
+        createButton("chooseStory", "Choose Story", "-100px", () => {
+            this.startScreenArgs.chooseStoryCallback(); 
         });
 
         // Create Story Button
@@ -106,6 +79,10 @@ export class StartScreen implements CreateSceneClass {
 
         return scene;
     };
-}
 
-export default new StartScreen();
+    dispose() {
+        if (this.gui) {
+            this.gui.dispose();
+        }
+    }
+}
