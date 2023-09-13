@@ -21,8 +21,10 @@ export class Player {
     public storyNarrationSlider?: ImageBasedSlider;
 
     constructor(public scene: Scene, public textToPlay: TextFormat[], public previousSceneCallback?: Callback, public nextSceneCallback?: Callback, public sound?: Sound) {
-        AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#6").then((gui) => {
+        AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#12").then((gui) => {
             gui.layer!.applyPostProcess = false;
+            this.openSettingsButton = gui.getControlByName("OpenSettings")!;
+
             this.speechBubble = gui.getControlByName("SpeechBlock")!;
             this.forwardButton = gui.getControlByName("Foward")!;
             this.forwardButton.onPointerUpObservable.add(() => {
@@ -63,6 +65,33 @@ export class Player {
             }
             this.updateText();
 
+            // Single spot for play/pause button that changes based on play/pause status
+            this.playSoundButton = gui.getControlByName("Play")!;
+            this.stopSoundButton = gui.getControlByName("Pause")!;
+
+            // adding the false in if statement for testing purposes
+            if (!this.sound && false) {
+                this.playSoundButton!.isVisible = false;
+                this.stopSoundButton!.isVisible = false;
+            } else {
+                // assuming autoplay sound when scene starts
+                this.playSoundButton.isVisible = false;
+
+                this.stopSoundButton.onPointerUpObservable.add(() => {
+                    console.log('clicked on stop sound button');
+                    this.stopSoundButton!.isVisible = false;
+                    this.playSoundButton!.isVisible = true;
+                    //this.sound!.stop();
+                });
+
+                this.playSoundButton.onPointerUpObservable.add(() => {
+                    console.log('clicked on play sound button');
+                    this.playSoundButton!.isVisible = false;
+                    this.stopSoundButton!.isVisible = true;
+                    //this.sound!.play();
+                });
+            }
+
             // this.playSoundButton = gui.getControlByName("PlaySound")!;
             // this.stopSoundButton = gui.getControlByName("StopSound")!;
             // if (!this.sound) {
@@ -80,13 +109,14 @@ export class Player {
             // }
         });
 
-        AdvancedDynamicTexture.ParseFromSnippetAsync("#JF6IFS#7").then((gui) => {
+        AdvancedDynamicTexture.ParseFromSnippetAsync("#JF6IFS#8").then((gui) => {
+            gui.layer!.applyPostProcess = false;
+            
             this.settingsModal = gui.getControlByName("SettingsModal")!;
             this.settingsModal.isVisible = false;
 
             // Open Settings Modal
-            this.openSettingsButton = gui.getControlByName("OpenSettings")!;
-            this.openSettingsButton.onPointerUpObservable.add(() => {
+            this.openSettingsButton?.onPointerUpObservable.add(() => {
                 console.log('clicked on open settings');
                 if (this.settingsModal) {
                     this.settingsModal.isVisible = true;
