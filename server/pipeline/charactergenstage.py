@@ -4,11 +4,15 @@ from config import config
 from rembg import remove
 import json
 import os
-from kandinskyllm import KandinskyLLM
+from llm import KandinskyLLM
 
 class CharacterGenStage(Stage):
     def __init__(self) -> None:
         self.imageGenLLM = KandinskyLLM()
+        super().__init__()
+
+    def __init__(self, imageGenLLM) -> None:
+        self.imageGenLLM = imageGenLLM
         super().__init__()
 
     def __repr__(self) -> str:
@@ -16,7 +20,6 @@ class CharacterGenStage(Stage):
 
     def __str__(self) -> str:
         return self.__repr__()
-
 
     def _process(self, context):
         story_folder = os.path.join(config.server_root, config.stories_dir, context.id)
