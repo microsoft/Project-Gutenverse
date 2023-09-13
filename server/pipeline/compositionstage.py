@@ -40,11 +40,7 @@ class CompositionStage(Stage):
                     llmOutput = llm.get_composition(story_content=storycontent, characters=json.dumps(characters))
                     character_composition_data = json.loads(llmOutput)
 
-                    save_file_path = os.path.join(subfolder_path, '3_composition_stage.json')
-                    if os.path.isfile(save_file_path):
-                        os.remove(save_file_path)
-
-                    # Save the aggregated data to a new JSON file in the current subfolder
+                    save_file_path = os.path.join(subfolder_path, '4_composition_stage.json')
                     with open(save_file_path, 'w') as output_file:
                         json.dump(character_composition_data, output_file, indent=4)
 

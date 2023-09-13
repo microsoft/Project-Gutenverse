@@ -8,6 +8,7 @@ from .pipelinecontext import *
 from .analyzerstage import *
 from .segmentationstage import *
 from .charactergenstage import *
-from .compositionstage import *
 from .skyboxgenstage import *
+from .compositionstage import *
+from scenecompilationstage import *
 from .stage import *

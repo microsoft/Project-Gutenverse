@@ -19,7 +19,28 @@ def serve_chapter_asset(story_id, chapter_number, filename):
     return send_from_directory(chapter_path, filename, as_attachment=True, mimetype=guess_type(filename)[0])
 
 
-@app.route("/stories/<story_id>", methods=["GET"])
+@app.route("/stories/<story_id>/scene", methods=["GET"])
+def get_scenes_from_disk(story_id):
+    story_path = os.path.join(config.server_root, config.stories_dir, story_id)
+    if not os.path.exists(story_path):
+        return jsonify({"error": "Story not found."}), 404
+    
+    chapters = []
+    chapter_dirs = sorted([d for d in os.listdir(story_path) if os.path.isdir(os.path.join(story_path, d)) and d.isdigit()], key=int)
+    
+    for chapter_dir in chapter_dirs:
+        scene_file_path = os.path.join(story_path, chapter_dir, "scene.json")
+        if os.path.exists(scene_file_path):
+            with open(scene_file_path, "r") as file:
+                data = json.load(file)
+                chapters.append({
+                    "Title": data.get("title", ""),
+                    "Chapter": chapter_dir
+                })
+    
+    return jsonify(chapters)                                   
+
+@app.route("/stories/<story_id>/chapters_index", methods=["GET"])
 def get_chapters_from_disk(story_id):
     story_path = os.path.join(config.server_root, config.stories_dir, story_id)
     if not os.path.exists(story_path):
