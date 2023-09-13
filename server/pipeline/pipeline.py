@@ -4,6 +4,7 @@ from analyzerstage import AnalyzerStage
 from segmentationstage import SegmentationStage
 from charactergenstage import CharacterGenStage
 from skyboxgenstage import SkyboxGenStage
+from compositionstage import CompositionStage
 from stage import Stage
 from config import config
 from llm import KandinskyLLM
@@ -15,7 +16,8 @@ class Pipeline:
             SegmentationStage(),
             AnalyzerStage(),
             CharacterGenStage(self.imageGenLLM),
-            SkyboxGenStage(self.imageGenLLM)
+            SkyboxGenStage(self.imageGenLLM),
+            CompositionStage()
         ]
 
     def _teardown_all_stage_checkpoints(self):
