@@ -22,25 +22,16 @@ def serve_chapter_asset(story_id, chapter_number, filename):
 
 
 @app.route("/stories/<story_id>/scene", methods=["GET"])
-def get_scenes_from_disk(story_id):
-    story_path = os.path.join(config.server_root, config.stories_dir, story_id)
-    if not os.path.exists(story_path):
-        return jsonify({"error": "Story not found."}), 404
+def serve_story_scene(story_id):
+    scene_path = os.path.join(config.server_root, config.stories_dir, story_id, "scene_compilation.json")
     
-    chapters = []
-    chapter_dirs = sorted([d for d in os.listdir(story_path) if os.path.isdir(os.path.join(story_path, d)) and d.isdigit()], key=int)
+    if not os.path.exists(scene_path):
+        return jsonify({"error": "Chapter not found."}), 404
     
-    for chapter_dir in chapter_dirs:
-        scene_file_path = os.path.join(story_path, chapter_dir, "scene.json")
-        if os.path.exists(scene_file_path):
-            with open(scene_file_path, "r") as file:
-                data = json.load(file)
-                chapters.append({
-                    "Title": data.get("title", ""),
-                    "Chapter": chapter_dir
-                })
-    
-    return jsonify(chapters)                                   
+    with open(scene_path, 'r') as file:
+        data = json.load(file)
+
+        return jsonify(data)
 
 @app.route("/stories/<story_id>/chapters_index", methods=["GET"])
 def get_chapters_from_disk(story_id):
