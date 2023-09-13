@@ -1,6 +1,6 @@
 import uuid
 from dataclasses import dataclass, field
-
+from utilities import story_title_to_hash
 
 @dataclass
 class Scene:
@@ -18,9 +18,16 @@ class SegmentationAnalysis:
 @dataclass
 class PipelineContext:
     title: str = ''
-    id: str = '9bac39d6-faa3-41ac-8b7a-b920a58464f8' #str(uuid.uuid4())
     story_data: str  = ''
     segmentation_analysis: SegmentationAnalysis = field(default_factory=SegmentationAnalysis)
+    _id: str = ''
+
+    @property
+    def id(self):
+        if not self._id:
+            id_ = story_title_to_hash(self.title)
+            self._id = id_
+        return self._id
 
 @dataclass
 class CheckpointData:

@@ -23,7 +23,6 @@ class SegmentationStage(Stage):
         
 
     def _checkpoint(self, *args, context, end, completed=False, **kwargs) -> bool:
-        logger.info(f"{context=} : {end=}")
         checkpoint = CheckpointData(context, end, completed)
         with open(self._checkpoint_path(context), 'w') as f:
             f.write(json.dumps(dataclass_to_dict(checkpoint)))
@@ -67,6 +66,7 @@ class SegmentationStage(Stage):
                 start_index = end_index
                 self._checkpoint(context=context, end=end_index)
 
+        logger.info(f"{len(analysis.scenes)} scenes found")
         # Save scenes to JSON files
         for scene in analysis.scenes:
             scene_folder = os.path.join(config.server_root, config.stories_dir, context.id, str(scene.index))
@@ -85,5 +85,6 @@ class SegmentationStage(Stage):
 
         json_data = llm.segment_block_into_scenes(block)
         analysis.last_processed_index = json_data["end_index"]
+        number_of_previous_scenes = len(analysis.scenes)
         for local_index, scene in enumerate(json_data["scenes"]):
-            analysis.scenes.append(Scene(**scene, index=local_index+len(analysis.scenes)))
+            analysis.scenes.append(Scene(**scene, index=local_index+number_of_previous_scenes))
