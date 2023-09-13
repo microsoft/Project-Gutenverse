@@ -1,5 +1,5 @@
 import {Scene, Sound} from "@babylonjs/core";
-import {AdvancedDynamicTexture, Control, TextBlock} from "@babylonjs/gui";
+import {AdvancedDynamicTexture, Control, TextBlock, ImageBasedSlider} from "@babylonjs/gui";
 
 export type TextFormat = {character: string, text: string};
 
@@ -13,6 +13,11 @@ export class Player {
     public currentTextIndex = 0;
     public playSoundButton?: Control;
     public stopSoundButton?: Control;
+    public openSettingsButton?: Control;
+    public settingsModal?: Control;
+    public closeSettingsButton?: Control;
+    public backgroundMusicSlider?: ImageBasedSlider;
+    public storyNarrationSlider?: ImageBasedSlider;
 
     constructor(public scene: Scene, public textToPlay: TextFormat[], public previousScene?: string, public nextScene?: string, public sound?: Sound) {
         AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#5").then((gui) => {
@@ -70,6 +75,42 @@ export class Player {
                     this.sound!.stop();
                 });
             }
+        });
+
+        AdvancedDynamicTexture.ParseFromSnippetAsync("#JF6IFS#7").then((gui) => {
+            this.settingsModal = gui.getControlByName("SettingsModal")!;
+            this.settingsModal.isVisible = false;
+
+            // Open Settings Modal
+            this.openSettingsButton = gui.getControlByName("OpenSettings")!;
+            this.openSettingsButton.onPointerUpObservable.add(() => {
+                console.log('clicked on open settings');
+                if (this.settingsModal) {
+                    this.settingsModal.isVisible = true;
+                }
+            });
+
+            // Close Settings Modal
+            this.closeSettingsButton = gui.getControlByName("CloseSettings")!;
+            this.closeSettingsButton.onPointerUpObservable.add(() => {
+                console.log('clicked on close settings');
+                if (this.settingsModal) {
+                    this.settingsModal.isVisible = false;
+                }
+            });
+
+            // Adjust Background Music Volume Slider
+            this.backgroundMusicSlider = <ImageBasedSlider>gui.getControlByName("BackgroundMusicVolume")!;
+            this.backgroundMusicSlider.onValueChangedObservable.add(function(value: any) {
+                console.log('Background Music Volume: ', value);
+            });
+
+            // Adjust Story Narration Volume Slider
+            this.storyNarrationSlider = <ImageBasedSlider>gui.getControlByName("StoryNarrationVolume")!;
+            this.storyNarrationSlider?.onValueChangedObservable.add(function(value: any) {
+                console.log('Story Narration Volume: ', value);
+            });
+
         });
     }
 
