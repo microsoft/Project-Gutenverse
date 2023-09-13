@@ -42,6 +42,6 @@ class CompositionStage(Stage):
                         }
                     
                     # Save the aggregated data to a new JSON file in the current subfolder
-                    with open(os.path.join(subfolder_path, '3_composition_stage.json'), 'w') as output_file:
+                    with open(os.path.join(subfolder_path, '4_composition_stage.json'), 'w') as output_file:
                         json.dump(character_composition_data, output_file, indent=4)
             return context

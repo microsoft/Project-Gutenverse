@@ -67,7 +67,7 @@ class CharacterGenStage(Stage):
         return context
 
     def generate_image(self, subfolder_path, character_name, appearance):
-        filename = f"{character_name.replace(' ', '')}.png"
+        filename = f"character_{character_name.replace(' ', '')}.png"
         prompt = appearance
         negative_prompt = "bad anatomy, low quality"
         image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt)
