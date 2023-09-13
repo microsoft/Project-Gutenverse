@@ -40,6 +40,14 @@ def get_chapters_from_disk(story_id):
     
     return jsonify(chapters)
 
+@app.route("/chargen", methods=["GET"])
+def chargen_test():
+    context = PipelineContext(title="Chargen Test", story_data="If you wrote this to disk you failed.")    
+    pipeline = Pipeline()
+    pipeline.execute(context)
+    return jsonify("It worked, amazing!!!!")
+
+
 @app.route("/stories/disk", methods=["GET"])
 def get_stories_from_disk():
     stories_dir = os.path.join(config.server_root, config.stories_dir)

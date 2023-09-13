@@ -3,13 +3,16 @@ from stage import Stage
 from config import config
 import json
 import os
+from llm import KandinskyLLM
 
 class CharacterGenStage(Stage):
     def __init__(self):
+        self.imageGenLLM = KandinskyLLM()
         pass
 
     def process(self, context):
-        story_folder = os.path.join(config.server_root, config.stories_dir, context.id)
+        # story_folder = os.path.join(config.server_root, config.stories_dir, context.id)
+        story_folder = os.path.join(config.server_root, config.stories_dir, "a9eb4271-479c-4bde-b87e-de38d650cf4d")
         
         # For each subfolder in the story_folder
         for subfolder in sorted(os.listdir(story_folder)):
@@ -28,7 +31,7 @@ class CharacterGenStage(Stage):
                     
                     # For each character in the JSON
                     for character_name, description in characters.items():
-                        image_filepath = self.generate_image(character_name, description)
+                        image_filepath = self.generate_image(subfolder_path, character_name, description)
                         character_gen_data['characters'][character_name] = {
                             "description": description,
                             "image": image_filepath
@@ -39,6 +42,12 @@ class CharacterGenStage(Stage):
                         json.dump(character_gen_data, output_file, indent=4)
 
     # placeholder method - replace with Sean's stable diffusion stuff
-    def generate_image(self, character_name, description):
+    def generate_image(self, subfolder_path, character_name, description):
         # Return a filepath based on the character name by removing whitespace
+        
+        prompt = description
+        negative_prompt = "bad anatomy, low quality, bad stuff is bad"
+        image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt)
+        imagePath = os.path.join(subfolder_path, f"{character_name.replace(' ', '')}.png")
+        image.save(imagePath)
         return f"{character_name.replace(' ', '')}.png"

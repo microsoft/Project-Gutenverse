@@ -8,8 +8,8 @@ from config import config
 class Pipeline:
     def __init__(self):
         self.stages = [
-            SegmentationStage(),
-            AnalyzerStage(),
+            # SegmentationStage(),
+            # AnalyzerStage(),
             CharacterGenStage()
         ]
 
