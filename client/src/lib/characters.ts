@@ -26,11 +26,19 @@ export type CharacterData = {
 
 export class Character {
     public sprite?: Mesh;
+    public material?: NodeMaterial;
+    public tex?: Texture;
     constructor(
         public data: CharacterData,
         public scene: Scene,
         public shadowGenerator: ShadowGenerator
     ) {}
+
+    dispose() {
+        this.sprite?.dispose();
+        this.material?.dispose();
+        this.tex?.dispose();
+    }
 
     async build(camera: Camera) {
         const sprite1 = MeshBuilder.CreatePlane(
@@ -39,6 +47,7 @@ export class Character {
             this.scene
         );
         const material1 = await NodeMaterial.ParseFromSnippetAsync("#0HR986#1");
+        this.material = material1;
         const inputTex = new Texture(this.data.imageUrl, this.scene);
         const texBlock = material1.getBlockByName("Texture") as TextureBlock;
         texBlock.texture = inputTex;

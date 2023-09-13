@@ -1,41 +1,123 @@
 import { Engine } from "@babylonjs/core/Engines/engine";
-import { WebGPUEngine } from "@babylonjs/core/Engines/webgpuEngine";
-import { getSceneModuleWithName } from "./createScene";
 import "@babylonjs/core/Engines/WebGPU/Extensions/engine.uniformBuffer";
+import {
+    ArcRotateCamera,
+    Constants,
+    DefaultRenderingPipeline,
+    DirectionalLight,
+    MeshBuilder,
+    NodeMaterial,
+    Scene,
+    ShadowGenerator,
+    StandardMaterial,
+    Texture,
+    Vector3,
+} from "@babylonjs/core";
+import { StartScreen } from "./scenes/startScreen";
 
-const getModuleToLoad = (): string | undefined =>
-    location.search.split("scene=")[1]?.split("&")[0];
+import testRamp from "../public/assets/testramp.png";
+
+const DEBUG = false;
+
+import storyContent from "../public/assets/scenes/princessAndDragon.json";
+import { StoryPlayer } from "./scenes/storyPlayer";
 
 export const babylonInit = async (): Promise<void> => {
-    // get the module to load
-    const moduleName = getModuleToLoad();
-    const createSceneModule = await getSceneModuleWithName(moduleName);
-    const engineType =
-        location.search.split("engine=")[1]?.split("&")[0] || "webgl";
-    // Execute the pretasks, if defined
-    await Promise.all(createSceneModule.preTasks || []);
-    // Get the canvas element
     const canvas = document.getElementById("renderCanvas") as HTMLCanvasElement;
-    // Generate the BABYLON 3D engine
-    let engine: Engine;
-    if (engineType === "webgpu") {
-        const webGPUSupported = await WebGPUEngine.IsSupportedAsync;
-        if (webGPUSupported) {
-            const webgpu = engine = new WebGPUEngine(canvas, {
-                adaptToDeviceRatio: true,
-                antialias: true,
+    const engine = new Engine(canvas, true);
+
+    const scene = new Scene(engine);
+    const camera = new ArcRotateCamera(
+        "playerCamera",
+        -Math.PI / 2,
+        1.53,
+        45,
+        new Vector3(0, 10, 0),
+        scene
+    );
+
+    if (DEBUG) {
+        void Promise.all([
+            import("@babylonjs/core/Debug/debugLayer"),
+            import("@babylonjs/inspector"),
+        ]).then((_values) => {
+            console.log(_values);
+            scene.debugLayer.show({
+                handleResize: true,
+                overlay: true,
+                globalRoot: document.getElementById("#root") || undefined,
             });
-            await webgpu.initAsync();
-            engine = webgpu;
-        } else {
-            engine = new Engine(canvas, true);
-        }
-    } else {
-        engine = new Engine(canvas, true);
+        });
     }
 
-    // Create the scene
-    const scene = await createSceneModule.createScene(engine, canvas);
+    camera.attachControl(canvas, true);
+    camera.lowerRadiusLimit = 10;
+    camera.upperRadiusLimit = 80;
+    camera.lowerBetaLimit = 0;
+    camera.upperBetaLimit = 1.8;
+
+    const sphere = MeshBuilder.CreateSphere("world", { diameter: 200 }, scene);
+    const material = new StandardMaterial("world", scene);
+    sphere.scaling = new Vector3(-1, -1, -1);
+    material.backFaceCulling = false;
+    sphere.material = material;
+    sphere.position.y += 50;
+
+    const dirLight = new DirectionalLight(
+        "dirLight",
+        camera.getDirection(new Vector3(0, -1, 1)),
+        scene
+    );
+    dirLight.position = camera.position.add(new Vector3(0, 5, 0));
+    dirLight.intensity = 0.2;
+    dirLight.shadowMinZ = 10;
+    dirLight.shadowMaxZ = 100;
+
+    const shadows = new ShadowGenerator(1024, dirLight);
+    shadows.transparencyShadow = true;
+    shadows.enableSoftTransparentShadow = true;
+    shadows.useContactHardeningShadow = true;
+
+    const stage = MeshBuilder.CreateGround("stage", {width: 100, height: 100}, scene);
+    stage.material = new StandardMaterial("stage", scene);
+    (stage.material as StandardMaterial).opacityTexture = new Texture(testRamp);
+
+    const postProcessing2Mat = await NodeMaterial.ParseFromSnippetAsync(
+        "#JQWFX3"
+    );
+    const postProcessing2 = postProcessing2Mat.createPostProcess(
+        camera,
+        1.0,
+        Constants.TEXTURE_LINEAR_LINEAR
+    );
+
+    const postProcessing = new DefaultRenderingPipeline(
+        "default",
+        true,
+        scene,
+        [camera]
+    );
+    postProcessing.grainEnabled = true;
+    postProcessing.grain.animated = false;
+    postProcessing.grain.intensity = 15;
+
+    const sceneArgs = {
+        scene,
+        shadowGenerator: shadows,
+        canvas,
+        world: sphere,
+        stage
+    };
+
+    // populate initially with main menu
+    const startScreen = new StartScreen({
+        chooseStoryCallback: () => {
+            startScreen.dispose();
+            const player = new StoryPlayer(storyContent, sceneArgs);
+            player.playScene();
+        }
+    });
+    await startScreen.populate(sceneArgs);
 
     // JUST FOR TESTING. Not needed for anything else
     (window as any).scene = scene;

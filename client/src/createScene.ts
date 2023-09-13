@@ -1,26 +1,17 @@
-import type { Engine } from "@babylonjs/core/Engines/engine";
+import { Mesh, ShadowGenerator } from "@babylonjs/core";
 import type { Scene } from "@babylonjs/core/scene";
 
-export interface CreateSceneClass {
-    createScene: (engine: Engine, canvas: HTMLCanvasElement) => Promise<Scene>;
-    preTasks?: Promise<unknown>[];
+export interface SceneArgs {
+    scene: Scene;
+    shadowGenerator: ShadowGenerator;
+    canvas: HTMLCanvasElement;
+    world: Mesh;
+    stage: Mesh;
 }
 
-export interface CreateSceneModule {
-    default: CreateSceneClass;
+export interface SceneClass {
+    populate: (sceneArgs: SceneArgs) => Promise<Scene>;
+    dispose: (sceneArgs: SceneArgs) => void;
 }
 
-export const getSceneModuleWithName = (
-    name = 'startScreen'
-): Promise<CreateSceneClass> => {
-    return import('./scenes/' + name).then((module: CreateSceneModule)=> {
-        return module.default;
-    });
-
-    // To build quicker, replace the above return statement with:
-
-    // return import('./scenes/defaultWithTexture').then((module: CreateSceneModule)=> {
-    //     return module.default;
-    // });
-};
-
+export type Callback = () => void;

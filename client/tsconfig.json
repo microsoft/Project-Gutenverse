@@ -4,8 +4,6 @@
 		"target": "es2021",
 		"moduleResolution": "node",
 		"strict": true,
-		"noImplicitAny": true,
-        "noImplicitReturns": true,
         "noImplicitThis": true,
         "strictNullChecks": true,
         "strictFunctionTypes": true,
@@ -13,5 +11,6 @@
         "sourceMap": true,
         "rootDir": "./",
         "esModuleInterop": true,
+        "resolveJsonModule": true
 	}
 }
