@@ -1,6 +1,7 @@
 
 from stage import Stage
 from config import config
+from rembg import remove
 import json
 import os
 from llm import KandinskyLLM
@@ -56,5 +57,6 @@ class CharacterGenStage(Stage):
         negative_prompt = "bad anatomy, low quality"
         image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt)
         imagePath = os.path.join(subfolder_path, filename)
-        image.save(imagePath)
+        image_bg_removed = remove(image)
+        image_bg_removed.save(imagePath)
         return filename

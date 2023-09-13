@@ -3,3 +3,4 @@ transformers==4.33.1
 accelerate==0.22.0
 --find-links https://download.pytorch.org/whl/torch_stable.html
 torch==2.0.1+cu118
+rembg==2.0.50
