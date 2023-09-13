@@ -3,6 +3,7 @@ import json
 from analyzerstage import AnalyzerStage
 from segmentationstage import SegmentationStage
 from charactergenstage import CharacterGenStage
+from skyboxgenstage import SkyboxGenStage
 from stage import Stage
 from config import config
 
@@ -11,7 +12,8 @@ class Pipeline:
         self.stages = [
             SegmentationStage(),
             AnalyzerStage(),
-            CharacterGenStage()
+            CharacterGenStage(),
+            SkyboxGenStage()
         ]
 
     def _teardown_all_stage_checkpoints(self):
