@@ -26,6 +26,12 @@ export class StartScreen implements SceneClass {
 
         // TODO: Add background image
 
+        const backgroundImage = new Image("backgroundImage", menuBackgroundUrl);
+        backgroundImage.width = 1;  // Relative width, covering the full width of the GUI
+        backgroundImage.height = 1; // Relative height, covering the full height of the GUI
+        backgroundImage.stretch = Image.STRETCH_FILL; // Stretch the image to fill the entire GUI
+        advancedTexture.addControl(backgroundImage); // Ensure this is the first control added, so it's in the background
+
         await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#38").then((gui) => {
             this.gui = advancedTexture;
 
