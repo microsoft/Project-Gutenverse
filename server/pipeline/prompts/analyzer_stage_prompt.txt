@@ -1,7 +1,7 @@
 Hi!  Could you parse some text and extract the  following:
 - The protagonists / main characters
 - A description of the setting for the purpose of generating a skybox image
-- A description of the mood / suggestion of appropriate ambient audio
+- A list of adjectives describing the mood for background music / suggestion of appropriate ambient audio sound effects
 
 Please use JSON as the output format and use specifics for descriptions rather than a speculation.  Here is a sample of the schema you should use:
 
@@ -17,11 +17,11 @@ Please use JSON as the output format and use specifics for descriptions rather t
 	"visualelements": "The presence of the lion and mouse, ropes binding the lion, and possibly some trees, grass, or rocks."
   },
   "audio": {
-	"mood": "The mood can be described as tense, suspenseful, and ultimately triumphant. There's an underlying theme of humility and unexpected friendship.",
+	"mood": "Tense, suspenseful, and ultimately triumphant music",
 	"sequence": {
-		"1": "Soft rustling, animal noises, and the mouse's scampering.",
-		"2": "Tense music, sounds of hunters, ropes tightening.",
-		"3": "The sound of gnawing, ropes snapping, and triumphant music as the lion is freed."
+		"1": "Sounds of soft rustling, animal noises, and the mouse's scampering.",
+		"2": "Sounds of hunters, ropes tightening.",
+		"3": "Sound of gnawing, ropes snapping, and triumph as the lion is freed."
 	}
   }
 }

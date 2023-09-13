@@ -1,0 +1,20 @@
+{
+    "characters": {
+        "Wolf": "A predatory animal who encounters a lost lamb and seeks to justify his intention to eat him.",
+        "Lamb": "A helpless and innocent creature who is approached by the wolf and becomes the target of the wolf's justification."
+    },
+    "setting": {
+        "location": "An open field or meadow, possibly near a fold where the rest of the lambs are located.",
+        "timeofday": "Daytime, possibly during the afternoon.",
+        "weather": "Clear or partly cloudy sky with a gentle breeze.",
+        "visualelements": "The presence of the wolf and lamb, tall grass in the meadow, and a distant fold where other lambs can be seen."
+    },
+    "audio": {
+        "mood": "The mood can be described as tense, manipulative, and potentially dangerous. There is a sense of vulnerability on the part of the lamb.",
+        "sequence": {
+            "1": "The sound of wind blowing lightly through the grass and occasional bird chirping.",
+            "2": "Subtle suspenseful music, low growls or snarls from the wolf, and occasional bleating from the lamb.",
+            "3": "The sound of the wolf's predatory actions, like snapping jaws or running footsteps, and a sudden shift to somber or foreboding music."
+        }
+    }
+}
