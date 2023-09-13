@@ -86,6 +86,12 @@ POST http://localhost:5000/stories
 
 You can use `curl` to test the API from the command line.
 
+#### To kick off the pipeline with a sample data
+
+```bash
+curl -X POST -F "title=Aesop's Fables" -F "file=@C:\\src\\Scripts\\aesop_abridged.txt" http://127.0.0.1:5000/upload_story
+```
+
 #### To get a list of stories:
 
 ```bash
@@ -95,5 +101,5 @@ curl -X GET http://localhost:5000/stories
 #### To create a new story:
 
 ```bash
-curl -X POST -H "Content-Type: application/json" -d '{"title":"New Story","content":"This is a new story","author":"John Doe"}' http://localhost:5000/stories
+curl -X POST -H "Content-Type: application/json" -d '{"title":"New Story","body":"This is a new story","author":"John Doe"}' http://localhost:5000/stories
 ```
