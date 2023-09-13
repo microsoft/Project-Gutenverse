@@ -24,18 +24,20 @@ export class StartScreen implements SceneClass {
         const scene = sceneArgs.scene;
         const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
 
-        // TODO: Add background image
-
-        const backgroundImage = new Image("backgroundImage", menuBackgroundUrl);
-        backgroundImage.width = 1;  // Relative width, covering the full width of the GUI
-        backgroundImage.height = 1; // Relative height, covering the full height of the GUI
-        backgroundImage.stretch = Image.STRETCH_FILL; // Stretch the image to fill the entire GUI
-        advancedTexture.addControl(backgroundImage); // Ensure this is the first control added, so it's in the background
-
-        await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#38").then((gui) => {
+        await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#40").then((gui) => {
             this.gui = advancedTexture;
 
-            // SECTION 1: MAIN MENU
+            // Add Background Image
+            const backgroundImage = new Image("backgroundImage", menuBackgroundUrl);
+            backgroundImage.width = 1;  // Relative width, covering the full width of the GUI
+            backgroundImage.height = 1; // Relative height, covering the full height of the GUI
+            backgroundImage.stretch = Image.STRETCH_FILL; // Stretch the image to fill the entire GUI
+            const backgroundImageContainer =  gui.getControlByName("BackgroundImageGrid")! as Grid;
+            backgroundImageContainer.addControl(backgroundImage);
+
+
+            // === MAIN MENU ===
+            
             // Get all of the menus and sub-menus
             const mainMenu = gui.getControlByName("MainMenuGrid")!;
             const exitMenu = gui.getControlByName("ExitMenuGrid")!;
@@ -88,13 +90,13 @@ export class StartScreen implements SceneClass {
             button_mainMenuExitConfirmButton.onPointerUpObservable.add(quit);
             button_mainMenuExitCancelButton.onPointerUpObservable.add(openMainMenu);
 
-            // SECTION 2: CHOOSE STORY MENU
+            // === CHOOSE STORY MENU ===
 
             // Setup the buttons in the Choose Story menu
             const button_closeMenuChooseStory = gui.getControlByName("Button_Close_ChooseStory")!;
             button_closeMenuChooseStory.onPointerUpObservable.add(openMainMenu);
 
-            // SECTION 3: CREATE STORY MENU
+            // === CREATE STORY MENU ===
 
             // Setup the buttons in the Create Story menu
             const button_closeMenuCreateStory = gui.getControlByName("Button_Close_CreateStory")!;
