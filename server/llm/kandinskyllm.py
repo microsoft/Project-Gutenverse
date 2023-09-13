@@ -6,7 +6,7 @@ class KandinskyLLM:
         self.pipe = AutoPipelineForText2Image.from_pretrained("kandinsky-community/kandinsky-2-2-decoder", torch_dtype=torch.float16)
         self.pipe = self.pipe.to("cuda")
 
-    def generate(self, prompt, negative_prompt = "", prior_guidance_scale = 1.0, height = 768, width = 768):
+    def generate(self, prompt, negative_prompt = "", prior_guidance_scale = 1.0, height = 512, width = 512):
         result = self.pipe(prompt=prompt, negative_prompt=negative_prompt, prior_guidance_scale=prior_guidance_scale, height=height, width=width)
         image = result.images[0]
         return image

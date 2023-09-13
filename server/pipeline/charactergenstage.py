@@ -11,8 +11,7 @@ class CharacterGenStage(Stage):
         pass
 
     def process(self, context):
-        # story_folder = os.path.join(config.server_root, config.stories_dir, context.id)
-        story_folder = os.path.join(config.server_root, config.stories_dir, "a9eb4271-479c-4bde-b87e-de38d650cf4d")
+        story_folder = os.path.join(config.server_root, config.stories_dir, context.id)
         
         # For each subfolder in the story_folder
         for subfolder in sorted(os.listdir(story_folder)):
@@ -31,9 +30,19 @@ class CharacterGenStage(Stage):
                     
                     # For each character in the JSON
                     for character_name, description in characters.items():
-                        image_filepath = self.generate_image(subfolder_path, character_name, description)
+                        appearance = ''
+                        summary = ''
+                        # Support both old and new JSON formats
+                        if type(description) is dict:
+                            appearance = description.get('appearance', '')
+                            summary = description.get('summary', '')
+                        else:
+                            appearance = summary = description
+
+                        image_filepath = self.generate_image(subfolder_path, character_name, appearance)
                         character_gen_data['characters'][character_name] = {
-                            "description": description,
+                            "summary": summary,
+                            "appearance": appearance,
                             "image": image_filepath
                         }
                     
@@ -41,13 +50,11 @@ class CharacterGenStage(Stage):
                     with open(os.path.join(subfolder_path, '2_charactergen_stage.json'), 'w') as output_file:
                         json.dump(character_gen_data, output_file, indent=4)
 
-    # placeholder method - replace with Sean's stable diffusion stuff
-    def generate_image(self, subfolder_path, character_name, description):
-        # Return a filepath based on the character name by removing whitespace
-        
-        prompt = description
-        negative_prompt = "bad anatomy, low quality, bad stuff is bad"
+    def generate_image(self, subfolder_path, character_name, appearance):
+        filename = f"{character_name.replace(' ', '')}.png"
+        prompt = appearance
+        negative_prompt = "bad anatomy, low quality"
         image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt)
-        imagePath = os.path.join(subfolder_path, f"{character_name.replace(' ', '')}.png")
+        imagePath = os.path.join(subfolder_path, filename)
         image.save(imagePath)
-        return f"{character_name.replace(' ', '')}.png"
+        return filename
