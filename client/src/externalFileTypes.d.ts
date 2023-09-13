@@ -3,6 +3,9 @@ declare module '*.jpg';
 declare module '*.png';
 declare module '*.env';
 
+// sound
+declare module '*.mp3';
+
 // 3D types
 declare module '*.glb';
 declare module '*.stl';

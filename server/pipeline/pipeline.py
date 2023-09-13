@@ -3,6 +3,7 @@ import json
 from analyzerstage import AnalyzerStage
 from segmentationstage import SegmentationStage
 from charactergenstage import CharacterGenStage
+from compositionstage import CompositionStage
 from skyboxgenstage import SkyboxGenStage
 from stage import Stage
 from config import config
@@ -19,7 +20,8 @@ class Pipeline:
             SegmentationStage(),
             AnalyzerStage(),
             CharacterGenStage(self.imageGenLLM),
-            SkyboxGenStage(self.imageGenLLM)
+            SkyboxGenStage(self.imageGenLLM),
+            CompositionStage()
         ]
 
     def __del__(self):

@@ -9,6 +9,7 @@ class OpenAiLLM:
         openai.api_key = config.OpenAIApiKey
         self.segmentation_prompt = self._get_segmentation_prompt()
         self.analysis_prompt = self._get_analysis_prompt()
+        self.compositon_prompt = self._get_composition_prompt()
 
     def _get_segmentation_prompt(self):        
         file_path = os.path.join(config.server_root, "pipeline\\prompts\\segmentation_stage_prompt.txt")
@@ -45,6 +46,26 @@ class OpenAiLLM:
         json_data = json.loads(jsonResponse)
         return json_data
 
+    def _get_composition_prompt(self):
+        file_path = os.path.join(config.server_root, "pipeline\\prompts\\composition_stage_prompt.txt")
+        
+        with open(file_path, 'r') as file:
+            return file.read()
+        
+    def get_composition(self, story_content, characters) -> str:
+        composition_prompt = self.compositon_prompt.replace("{{story_content}}", story_content)
+        composition_prompt = self.compositon_prompt.replace("{{characters}}", characters)
+        output = openai.ChatCompletion.create(
+                model = "gpt-3.5-turbo-16k",
+                messages=[{
+                    "role": "user",
+                    "content": composition_prompt
+                }],
+                temperature=0.1,
+            )
+        print(output)
+        return output["choices"][0]["message"]["content"]
+    
     def prompt(self, prompt: str):
         return openai.ChatCompletion.create(
             model = "gpt-3.5-turbo-16k",
