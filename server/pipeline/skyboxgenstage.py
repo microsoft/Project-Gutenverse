@@ -1,6 +1,7 @@
 from loguru import logger
 from stage import Stage
 from config import config
+from PIL import Image
 from rembg import remove
 import json
 import os
@@ -27,8 +28,8 @@ class SkyboxGenStage(Stage):
 
             save_file_path = os.path.join(subfolder_path, '3_skyboxgen_stage.json')
             if os.path.isfile(save_file_path):
-                logger.info(f"{self} step found to be already completed")
-                return context
+                logger.info(f"{self} step found to be already completed for scene " + subfolder)
+                continue
             
             # Check if the path is a directory and contains the required JSON file
             if os.path.isdir(subfolder_path) and '1_analysis_stage.json' in os.listdir(subfolder_path):
@@ -47,7 +48,8 @@ class SkyboxGenStage(Stage):
                                              "beautiful",
                                              "stunning"])
 
-                    image_filepath = self.generate_image(subfolder_path, "0_skybox", skybox_prompt)
+                    flat_skybox_name = self.generate_image(subfolder_path, "skybox", skybox_prompt)
+                    image_filepath = self.create_pseudo_360(subfolder_path, flat_skybox_name, os.path.join(subfolder_path, "skybox_360.png"))
                     skybox_gen_data = {
                         "setting_info": setting,
                         "prompt": skybox_prompt,
@@ -66,6 +68,28 @@ class SkyboxGenStage(Stage):
         negative_prompt = "low quality"
         image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt, width=1024, height=512)
         imagePath = os.path.join(subfolder_path, filename)
-        image_bg_removed = remove(image)
-        image_bg_removed.save(imagePath)
+        image.save(imagePath)
         return filename
+    
+    def create_pseudo_360(self, subfolder_path, skybox_filename, output_path):
+        # Open the image
+        imagePath = os.path.join(subfolder_path, skybox_filename)
+        image = Image.open(imagePath)
+        original_width, original_height = image.size
+        
+        # Flip the image and append to the right
+        flipped_image = image.transpose(Image.FLIP_LEFT_RIGHT)
+        new_width = original_width * 2
+        new_image = Image.new("RGB", (new_width, original_height))
+        new_image.paste(image, (0, 0))
+        new_image.paste(flipped_image, (original_width, 0))
+        
+        # Add padding to the top and bottom
+        top_padding = int(original_height * 0.2)
+        bottom_padding = int(original_height * 0.6)
+        padded_height = original_height + top_padding + bottom_padding
+        final_image = Image.new("RGB", (new_width, padded_height), (0, 0, 0))
+        final_image.paste(new_image, (0, top_padding))
+        
+        # Save the final image
+        final_image.save(output_path)
