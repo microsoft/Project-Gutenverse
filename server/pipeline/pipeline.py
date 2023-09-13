@@ -6,11 +6,15 @@ from charactergenstage import CharacterGenStage
 from skyboxgenstage import SkyboxGenStage
 from stage import Stage
 from config import config
-from llm import KandinskyLLM
+from llm import *
 
 class Pipeline:
     def __init__(self):
-        self.imageGenLLM = KandinskyLLM()
+        if config.UseGpu:
+            self.imageGenLLM = KandinskyLLM()
+        else:
+            self.imageGenLLM = DalleLLM()
+
         self.stages = [
             SegmentationStage(),
             AnalyzerStage(),
