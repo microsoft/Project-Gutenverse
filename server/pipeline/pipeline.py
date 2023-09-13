@@ -18,6 +18,10 @@ class Pipeline:
             SkyboxGenStage(self.imageGenLLM)
         ]
 
+    def __del__(self):
+        del self.imageGenLLM
+        del self.stages
+
     def _teardown_all_stage_checkpoints(self):
         def apply_teardown(stage: Stage):
             stage._teardown_checkpoints()
