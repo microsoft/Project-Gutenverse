@@ -40,12 +40,12 @@ class SkyboxGenStage(Stage):
                     setting = data.get('setting', {})
                     skybox_gen_data = {"skybox": {}}
                     
-                    skybox_prompt = " ".join(setting["location"],
+                    skybox_prompt = " ".join([setting["location"],
                                              setting["timeofday"],
                                              setting["weather"],
                                              setting["visualelements"],
                                              "beautiful",
-                                             "stunning",)
+                                             "stunning"])
 
                     image_filepath = self.generate_image(subfolder_path, "0_skybox", skybox_prompt)
                     skybox_gen_data = {
