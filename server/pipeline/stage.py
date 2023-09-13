@@ -7,7 +7,7 @@ from pipelinecontext import PipelineContext
 
 class Stage(ABC):
     def process(self, context):
-        logger.debug(f'Processing stage: {__class__}')
+        logger.debug(f'Processing stage: {str(self)}')
         context = self._load_checkpoint(context)
         return self._process(context)
 

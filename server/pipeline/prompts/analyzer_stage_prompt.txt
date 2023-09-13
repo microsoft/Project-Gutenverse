@@ -1,5 +1,5 @@
 Hi!  Could you parse some text and extract the  following:
-- The protagonists / main characters
+- The protagonists / main characters and a description of their appearance for the purpose of generating images of the characters
 - A description of the setting for the purpose of generating a skybox image
 - A list of adjectives describing the mood for background music / suggestion of appropriate ambient audio sound effects
 
@@ -7,13 +7,19 @@ Please use JSON as the output format and use specifics for descriptions rather t
 
 {
   "characters": {
-	"The Lion": "A powerful and proud animal who is initially skeptical of the mouse's ability to help him but is later saved by the mouse",
-	"The Mouse": "A small and seemingly insignificant creature who shows courage and gratitude by saving the lion."
+	"The Lion": {
+		"summary" : "A powerful and proud animal who is initially skeptical of the mouse's ability to help him but is later saved by the mouse",
+		"appearance" : "A large muscular lion with bright orange fur and sharp claws"
+	},
+	"The Mouse": {
+		"summary" : "A small and seemingly insignificant creature who shows courage and gratitude by saving the lion.",
+		"appearance" : "A skittish white mouse with matted fur and a bright pink nose"
+	}
   },
   "setting": {
 	"location": "A natural wilderness setting, such as a savanna, grassland, or forest.",
 	"timeofday": "Since the lion was asleep at the beginning, it could be early morning or late ",
-	"weather": "A clear sky or partly cloudy sky"
+	"weather": "A clear sky or partly cloudy sky",
 	"visualelements": "The presence of the lion and mouse, ropes binding the lion, and possibly some trees, grass, or rocks."
   },
   "audio": {

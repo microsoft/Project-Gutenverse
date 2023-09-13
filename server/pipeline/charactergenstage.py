@@ -1,10 +1,15 @@
 from loguru import logger
 from stage import Stage
 from config import config
+from rembg import remove
 import json
 import os
+from kandinskyllm import KandinskyLLM
 
 class CharacterGenStage(Stage):
+    def __init__(self) -> None:
+        self.imageGenLLM = KandinskyLLM()
+        super().__init__()
 
     def __repr__(self) -> str:
         return 'CharacterGenStage'
@@ -37,9 +42,19 @@ class CharacterGenStage(Stage):
                     
                     # For each character in the JSON
                     for character_name, description in characters.items():
-                        image_filepath = self.generate_image(character_name, description)
+                        appearance = ''
+                        summary = ''
+                        # Support both old and new JSON formats
+                        if type(description) is dict:
+                            appearance = description.get('appearance', '')
+                            summary = description.get('summary', '')
+                        else:
+                            appearance = summary = description
+
+                        image_filepath = self.generate_image(subfolder_path, character_name, appearance)
                         character_gen_data['characters'][character_name] = {
-                            "description": description,
+                            "summary": summary,
+                            "appearance": appearance,
                             "image": image_filepath
                         }
                     
@@ -49,7 +64,14 @@ class CharacterGenStage(Stage):
             
             return context
 
-    # placeholder method - replace with Sean's stable diffusion stuff
-    def generate_image(self, character_name, description):
-        # Return a filepath based on the character name by removing whitespace
-        return f"{character_name.replace(' ', '')}.png"
+        return context
+
+    def generate_image(self, subfolder_path, character_name, appearance):
+        filename = f"{character_name.replace(' ', '')}.png"
+        prompt = appearance
+        negative_prompt = "bad anatomy, low quality"
+        image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt)
+        imagePath = os.path.join(subfolder_path, filename)
+        image_bg_removed = remove(image)
+        image_bg_removed.save(imagePath)
+        return filename
