@@ -1,14 +1,17 @@
-
 from stage import Stage
 from config import config
 import json
 import os
 
 class CompositionStage(Stage):
-    def __init__(self):
-        pass
 
-    def process(self, context):
+    def __repr__(self) -> str:
+        return 'CompositionStage'
+
+    def __str__(self) -> str:
+        return self.__repr__()
+
+    def _process(self, context):
         story_folder = os.path.join(config.server_root, config.stories_dir, context.id)
         
         # For each subfolder in the story_folder
@@ -40,3 +43,4 @@ class CompositionStage(Stage):
                     # Save the aggregated data to a new JSON file in the current subfolder
                     with open(os.path.join(subfolder_path, '3_composition_stage.json'), 'w') as output_file:
                         json.dump(character_composition_data, output_file, indent=4)
+            return context
