@@ -10,6 +10,7 @@ import { Grid } from "@babylonjs/gui/2D/controls/grid"
 import {StackPanel } from "@babylonjs/gui/2D/controls/stackPanel"
 
 import menuBackgroundUrl from "../../public/assets/menu_background.jpg";
+import buttonBackgroundUrl from "../../public/assets/textures/old_paper_texture.png"
 import { StoryPlayer } from "./storyPlayer";
 
 export interface StartScreenArgs {
@@ -26,7 +27,7 @@ export class StartScreen implements SceneClass {
         const scene = sceneArgs.scene;
         const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
 
-        await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#40").then((gui) => {
+        await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#48").then((gui) => {
             this.gui = advancedTexture;
 
             // Add Background Image
@@ -47,14 +48,53 @@ export class StartScreen implements SceneClass {
             const chooseStoryMenu = gui.getControlByName("ChooseStoryGrid")!;
             const createStoryMenu = gui.getControlByName("CreateStoryGrid")!;
 
+            const setupButtonVisuals = function(button: Button, title: string, fontFamly: string, fontSize: number, isBold: boolean, url: "*.jpg"){
+                // Make image first, so the text appears in front of it
+                var buttonImage = new Image("buttonImage", url);
+                buttonImage.width = 1;
+                buttonImage.height = 1;
+                buttonImage.stretch = Image.STRETCH_FILL;
+                button.addControl(buttonImage);
+
+                // Now make the text
+                var buttonText = new TextBlock("text_" + title, title);
+                buttonText.width = "100.00%";
+                buttonText.height =  "100.00%";
+                buttonText.fontFamily = fontFamly;
+                buttonText.color = "black";
+                buttonText.fontSize = fontSize;
+                buttonText.fontWeight
+                if (isBold) {
+                    buttonText.fontWeight = "bold";
+                }
+                button.addControl(buttonText);
+            }
+
+            const btnFontFamily = "MV Boli";
+            const btnFontSize = 35;
+            const btnIsBold = false;
+
             // Setup the buttons in Main menu
             const button_mainMenuChooseStoryButton = gui.getControlByName("Button_MainMenu_ChooseStory")! as Button;
+            setupButtonVisuals(button_mainMenuChooseStoryButton, "Choose Story", btnFontFamily, btnFontSize, btnIsBold, buttonBackgroundUrl);
+
             const button_mainMenuCreateStoryButton = gui.getControlByName("Button_MainMenu_CreateStory")! as Button;
+            setupButtonVisuals(button_mainMenuCreateStoryButton, "Create Story", btnFontFamily, btnFontSize, btnIsBold, buttonBackgroundUrl);
+
             const button_mainMenuExitButton = gui.getControlByName("Button_MainMenu_Exit")! as Button;
+            setupButtonVisuals(button_mainMenuExitButton, "Exit", btnFontFamily, btnFontSize, btnIsBold, buttonBackgroundUrl);
+            
             const button_mainMenuExitConfirmButton = gui.getControlByName("Button_ConfirmExit")! as Button;
+            setupButtonVisuals(button_mainMenuExitConfirmButton, "Yes", btnFontFamily, btnFontSize, btnIsBold, buttonBackgroundUrl);
+
             const button_mainMenuExitCancelButton = gui.getControlByName("Button_CancelExit")! as Button;
+            setupButtonVisuals(button_mainMenuExitCancelButton, "No", btnFontFamily, btnFontSize, btnIsBold, buttonBackgroundUrl);
+            
             const rootGrid =  gui.getControlByName("RootGrid")! as Control;
             const button_createStory = gui.getControlByName("Button_CreateStoryLaunch")! as Button;
+            
+
+
 
             const openMainMenu = function(){
                 mainMenu.isVisible = true;
@@ -82,6 +122,8 @@ export class StartScreen implements SceneClass {
                 mainMenu.isVisible = false;
                 chooseStoryMenu.isVisible = false;
                 createStoryMenu.isVisible = true;
+
+                // TODO: Reset the text input area
             }
 
             const quit = function() {
@@ -104,6 +146,7 @@ export class StartScreen implements SceneClass {
 
             // TODO: Replace using real data 
             // Fetching stories from the web service
+            /*
             const storyRequest = fetch("http://127.0.0.1:5000/stories/disk");
             storyRequest.then(response => {
                 if (!response.ok) {
@@ -148,6 +191,7 @@ export class StartScreen implements SceneClass {
                 })
                 
             });
+            */
             
             // === CREATE STORY MENU ===
 
