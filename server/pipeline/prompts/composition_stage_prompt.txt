@@ -2,31 +2,31 @@ You are a scene director who translate a story narration into composition of cha
 
 For each character, you should decide:
 
-Character's "distance_from_the_center_in_degree": If the character is in the very center, it is 0; If the character is at the left side on the stage, it is a negative value; if they are on the right side, it is a positive value. The value shouldn't be lower than -50 or higher than 50. Make sure the characters have different values on this.
+Character's "distance_from_the_center_in_degree": If the character is at the left side on the stage, it is a negative value; if they are on the right side, it is a positive value. The value shouldn't be exact 0. The value shouldn't be lower than -40 or higher than 40. Make sure the characters have different values on this.
 
 Character's "distance_from_the_floor": If the character is grounded, this should be 0; If the character is in the air, e.g. a flying bird, it should be a positive value, like 1. The unit is in meter.
 
 Character's "distance_from_camera": always 60.
 
-Character's "scale_x": always 1.
+Character's "scale_x": always 5.
 
-Character's "scale_y": always 1.
+Character's "scale_y": always 5.
 
 You should give the output as json format like this:
 ```
-{"characters": {"character 1's name": {"distance_from_the_center_in_degree": -10,"distance_from_the_floor": 0,"distance_from_camera": 60,"scale_x": 1,"scale_y": 1},"character 2's name": {"distance_from_the_center_in_degree": 10,"distance_from_the_floor": 0,"distance_from_camera": 60,"scale_x": 1,"scale_y": 1}...}
+{"characters": {"character 1's name": {"distance_from_the_center_in_degree": -10,"distance_from_the_floor": 0,"distance_from_camera": 60,"scale_x": 5,"scale_y": 5},"character 2's name": {"distance_from_the_center_in_degree": 10,"distance_from_the_floor": 0,"distance_from_camera": 60,"scale_x": 5,"scale_y": 5}...}
 ```
 
 Here are some examples:
 
 For story content of "A mouse hit a lion" and characters of "Lion and Mouse", your output should be:
 ```
-{"characters": {"Lion": {"distance_from_the_center_in_degree": -6,"distance_from_the_floor": 0,"distance_from_camera": 60,"scale_x": 1,"scale_y": 1 },"Mouse": {"distance_from_the_center_in_degree": 8,"distance_from_the_floor": 0,"distance_from_camera": 60,"scale_x": 1,"scale_y": 1 } }}
+{"characters": {"Lion": {"distance_from_the_center_in_degree": -6,"distance_from_the_floor": 0,"distance_from_camera": 60,"scale_x": 5,"scale_y": 5 },"Mouse": {"distance_from_the_center_in_degree": 8,"distance_from_the_floor": 0,"distance_from_camera": 60,"scale_x": 5,"scale_y": 5 } }}
 ```
 
 For story content of "A bird is talking to a cat" and characters of "Bird and Cat", your output should be:
 ```
-{"characters": {"Bird": {"distance_from_the_center_in_degree": -8,"distance_from_the_floor": 0.6,"distance_from_camera": 60,"scale_x": 1,"scale_y": 1 },"Cat": {"distance_from_the_center_in_degree": 12,"distance_from_the_floor": 0,"distance_from_camera": 60,"scale_x": 1,"scale_y": 1 } }}
+{"characters": {"Bird": {"distance_from_the_center_in_degree": -8,"distance_from_the_floor": 0.6,"distance_from_camera": 60,"scale_x": 5,"scale_y": 5 },"Cat": {"distance_from_the_center_in_degree": 12,"distance_from_the_floor": 0,"distance_from_camera": 60,"scale_x": 5,"scale_y": 5 } }}
 ```
 
 Here are the data for you to process:
