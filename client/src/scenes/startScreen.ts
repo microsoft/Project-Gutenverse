@@ -28,7 +28,7 @@ export class StartScreen implements SceneClass {
         const scene = sceneArgs.scene;
         const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
 
-        await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#55").then((gui) => {
+        await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#57").then((gui) => {
             this.gui = advancedTexture;
 
             // We need to create the text input field, as it is used in other functions
@@ -156,9 +156,11 @@ export class StartScreen implements SceneClass {
 
             const stackButtonContainer = gui.getControlByName("StackPanel_StoryButtons")! as StackPanel;
 
+            // Use this to make the visuals of each story button. Cannot use real da
+
             // TODO: Replace using real data 
             // Fetching stories from the web service
-            /*
+            
             const storyRequest = fetch("http://127.0.0.1:5000/stories/disk");
             storyRequest.then(response => {
                 if (!response.ok) {
@@ -203,7 +205,12 @@ export class StartScreen implements SceneClass {
                 })
                 
             });
-            */
+            
+
+            // THIS IS JUST FOR MOCK DATA
+            // TODO: FIx my machine so I can use real data
+
+
             
             // === CREATE STORY MENU ===
 
