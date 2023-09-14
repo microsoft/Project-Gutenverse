@@ -43,6 +43,7 @@ class AudioStage(Stage):
             save_file_path = os.path.join(subfolder_path, '4_audio_stage.json')
             if os.path.isfile(save_file_path):
                 logger.info(f"{self} step found to be already completed")
+                continue
 
             # Check if the path is a directory and contains the required JSON file
             if os.path.isdir(subfolder_path) and '1_analysis_stage.json' in os.listdir(subfolder_path):

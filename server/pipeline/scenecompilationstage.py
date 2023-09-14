@@ -21,6 +21,8 @@ class SceneCompilationStage(Stage):
 
         # For each subfolder in the story_folder
         for subfolder in sorted(os.listdir(story_folder)):
+            if not os.path.isdir(os.path.join(story_folder, subfolder)):
+                continue
             subfolder_path = os.path.join(story_folder, subfolder)
 
             save_file_path = os.path.join(subfolder_path, '5_scenecompilation_stage.json')
