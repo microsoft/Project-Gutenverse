@@ -5,6 +5,8 @@ declare module '*.env';
 
 // sound
 declare module '*.mp3';
+declare module '*.flac';
+declare module '*.wav';
 
 // 3D types
 declare module '*.glb';
