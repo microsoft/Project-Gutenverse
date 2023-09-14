@@ -54,6 +54,7 @@ class CharacterGenStage(Stage):
                             summary = description.get('summary', '')
                         else:
                             appearance = summary = description
+                        appearance += ', full body'
                         appearance += ', ' + visual_style
                         image_filepath = self.generate_image(subfolder_path, character_name, appearance)
                         character_gen_data['characters'][character_name] = {
@@ -72,7 +73,7 @@ class CharacterGenStage(Stage):
     def generate_image(self, subfolder_path, character_name, appearance):
         filename = f"character_{character_name.replace(' ', '')}.png"
         prompt = appearance
-        negative_prompt = "bad anatomy, low quality"
+        negative_prompt = "bad anatomy, low quality, closeup, blurry edges, incomplete body"
         image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt)
         imagePath = os.path.join(subfolder_path, filename)
         image_bg_removed = remove(image)
