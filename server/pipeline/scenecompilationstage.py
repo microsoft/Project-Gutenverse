@@ -60,10 +60,12 @@ class SceneCompilationStage(Stage):
             scene_compilation_data["environment"] = skybox_filepath
 
             # Add in audio assets
-            audiostage_filepath = os.path.join(story_folder, subfolder, "4_audio_stage.json")
+            audiostage_filepath = os.path.join(story_folder, subfolder, "6_audio_stage.json")
             audiostage_data = self.load_json_data(audiostage_filepath)
             music_file_name = audiostage_data["audio"]["music_file"]
+            text_tospeech_filename = audiostage_data["audio"]["tts_file"]
             scene_compilation_data["music"] = f"/stories/{str(context.id)}/{subfolder}/assets/{music_file_name}"
+            scene_compilation_data["tts"] = f"/stories/{str(context.id)}/{subfolder}/assets/{text_tospeech_filename}"
             scene_compilation_data["audio"] = self.transform_audio_data(audiostage_data, context.id, subfolder)["audio"]
 
             scene_json = scene_compilation_data
