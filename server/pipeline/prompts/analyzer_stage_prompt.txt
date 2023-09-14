@@ -24,11 +24,11 @@ Please use JSON as the output format and use specifics for descriptions rather t
 	"visualelements": "The presence of ropes that could bind a lion, and possibly some trees, grass, or rocks."
   },
   "audio": {
-	"mood": "Tense, suspenseful, and ultimately triumphant music",
+	"mood": "Calm in the morning, then suspenseful, then triumphant music set in the wilderness.",
 	"sequence": {
-		"1": "Sounds of soft rustling, animal noises, and the mouse's scampering.",
-		"2": "Sounds of hunters, ropes tightening.",
-		"3": "Sound of gnawing, ropes snapping, and triumph as the lion is freed."
+		"1": "Sound of the wind rustling through the forest over calm flute music, punctuated by bird chirps.",
+		"2": "Sounds of dramatic running footsteps over crunchy leaves and panting for breath.",
+		"3": "Sound of triumph and victory, energetic and upbeat."
 	}
   },
   "visualstyle": "hyperrealistic, grimdark, gritty"
