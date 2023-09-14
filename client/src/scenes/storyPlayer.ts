@@ -13,7 +13,7 @@ export class StoryPlayer {
 
     public async playScene() {
         this.player.currentTextIndex = 0;
-        this.player.textToPlay = this.storyContent.scenes[this.currentSceneIndex].speech;
+        this.player.textToPlay = this.storyContent.scenes[this.currentSceneIndex].speech || "";
 
         const sceneElements = new BasicStorybookScene();
         this.currSceneElements = sceneElements;

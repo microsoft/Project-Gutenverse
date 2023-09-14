@@ -1,6 +1,7 @@
 import os
 import json
 from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
 from mimetypes import guess_type
 from config import config
 from pipeline import Pipeline
@@ -10,6 +11,7 @@ from loguru import logger
 from bson import ObjectId
 
 app = Flask(__name__)
+CORS(app)
 
 @app.before_request
 def log_request_info():

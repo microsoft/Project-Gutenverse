@@ -153,7 +153,7 @@ export class Player {
     }
 
     updateText() {
-        if (this.text) {
+        if (this.text && this.textToPlay) {
             const character = this.textToPlay[this.currentTextIndex].character;
             const text = this.textToPlay[this.currentTextIndex].text;
             this.text.text = `${character}: ${text}`;
