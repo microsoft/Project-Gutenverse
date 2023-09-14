@@ -33,6 +33,7 @@ class SceneCompilationStage(Stage):
             segmentation_filepath = os.path.join(story_folder, subfolder, "scene.json")
             charactergen_filepath = os.path.join(story_folder, subfolder, "2_charactergen_stage.json")
             composition_filepath = os.path.join(story_folder, subfolder, "4_composition_stage.json")
+            
             skybox_filepath = f"/stories/{str(context.id)}/{subfolder}/assets/skybox_360.png"
         
             if not os.path.isfile(charactergen_filepath):
@@ -57,6 +58,14 @@ class SceneCompilationStage(Stage):
             scene_compilation_data = self.transform_composition_data(composition_data)
             
             scene_compilation_data["environment"] = skybox_filepath
+
+            # Add in audio assets
+            audiostage_filepath = os.path.join(story_folder, subfolder, "4_audio_stage.json")
+            audiostage_data = self.load_json_data(audiostage_filepath)
+            music_file_name = audiostage_data["audio"]["music_file"]
+            scene_compilation_data["music"] = f"/stories/{str(context.id)}/{subfolder}/assets/{music_file_name}"
+            scene_compilation_data["audio"] = self.transform_audio_data(audiostage_data, context.id, subfolder)["audio"]
+
             scene_json = scene_compilation_data
 
             # Save the aggregated data to a new JSON file in the current subfolder
@@ -70,6 +79,23 @@ class SceneCompilationStage(Stage):
 
         return context
 
+    def transform_audio_data(self, input_data, id, subfolder):
+        output_data = {
+            "audio": {
+                "mood": input_data["audio"]["mood"],
+                "music_file": input_data["audio"]["music_file"],
+                "audio_files": {}
+            }
+        }
+
+        for key, value in input_data["audio"]["audio_files"].items():
+            description = input_data["audio"]["sequence"][key]
+            output_data["audio"]["audio_files"][key] = {
+                "name": f"/stories/{str(id)}/{subfolder}/assets/{value}",
+                "description": description
+            }
+
+        return output_data
     
     def transform_composition_data(self, composition_data):
         transformed_characters = []
