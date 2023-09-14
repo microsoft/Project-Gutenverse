@@ -5,6 +5,7 @@ from segmentationstage import SegmentationStage
 from charactergenstage import CharacterGenStage
 from skyboxgenstage import SkyboxGenStage
 from compositionstage import CompositionStage
+from audiostage import AudioStage
 from skyboxgenstage import SkyboxGenStage
 from scenecompilationstage import SceneCompilationStage
 from stage import Stage
@@ -24,6 +25,7 @@ class Pipeline:
             CharacterGenStage(self.imageGenLLM),
             SkyboxGenStage(self.imageGenLLM),
             CompositionStage(),
+            AudioStage(),
             SceneCompilationStage()
         ]
 
