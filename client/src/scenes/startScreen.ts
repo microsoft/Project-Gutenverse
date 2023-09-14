@@ -58,8 +58,7 @@ export class StartScreen implements SceneClass {
             const uploadButton = gui.getControlByName("Button_CreateStoryLaunch");
             uploadButton?.onPointerClickObservable.addOnce(() => {
                 // Extract title and body from input fields
-                // const storyTitle = titleInputTextArea.text;
-                const storyTitle = "User Submitted_" + new Date().getMilliseconds()
+                const storyTitle = inputNameArea.text;
                 const storyBody = inputTextArea.text;
 
                 // Create the JSON payload

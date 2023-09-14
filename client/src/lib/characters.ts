@@ -25,6 +25,7 @@ const SIZE_MULT = 10;
 export type CharacterData = {
     name: string;
     imageUrl: string;
+    soundEffect: string;
     distanceFromCamera: number;
     angularDistanceFromCamera: number;
     width: number;
@@ -36,7 +37,7 @@ import soundUrl from "../../public/assets/audio/671175__tgerginov__magic.wav";
 
 export class Character {
     public sprite?: Mesh;
-    public material?: NodeMaterial;
+    public material?: StandardMaterial;
     public tex?: Texture;
     constructor(
         public data: CharacterData,
@@ -58,7 +59,7 @@ export class Character {
                 this.scene
             );
             const hightlight = new HighlightLayer("hl" + this.data.name, this.scene);
-            const sound = new Sound("plim", soundUrl);
+            const sound = new Sound("plim", this.data.soundEffect);
             sprite1.actionManager = new ActionManager(this.scene);
             sprite1.actionManager.registerAction(
                 new PlaySoundAction(
@@ -81,39 +82,23 @@ export class Character {
                     }
                 )
             );
-            const material1 = await NodeMaterial.ParseFromSnippetAsync(
-                "#0HR986#1"
-            );
-            this.material = material1;
+ 
+            this.material = new StandardMaterial("CharacterMat_" + this.data.name, this.scene);
             const inputTex = new Texture(
                 "http://localhost:5000" + this.data.imageUrl,
                 this.scene
             );
-            const texBlock = material1.getBlockByName(
-                "Texture"
-            ) as TextureBlock;
-            texBlock.texture = inputTex;
-            material1.backFaceCulling = false;
-            const worldPosVarName = (
-                material1.getBlockByName("WorldPos")! as any
-            ).output.associatedVariableName;
-            const alphaVarName = (material1.getBlockByName("myalpha")! as any)
-                .output.associatedVariableName;
-
-            material1.shadowDepthWrapper = new ShadowDepthWrapper(
-                material1,
-                this.scene,
-                {
-                    remappedVariables: [
-                        "worldPos",
-                        worldPosVarName,
-                        "alpha",
-                        alphaVarName,
-                    ],
-                }
-            );
-            sprite1.material = material1;
-            material1.build(true);
+        
+            inputTex.hasAlpha = true;
+            this.material.emissiveTexture = inputTex;
+            this.material.diffuseTexture = inputTex;
+            this.material.emissiveColor = Color3.White();
+            this.material.ambientColor = Color3.White();
+            this.material.backFaceCulling = false;
+     
+           
+            sprite1.material = this.material;
+   
 
             this.shadowGenerator.addShadowCaster(sprite1);
 
