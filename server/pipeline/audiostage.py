@@ -16,7 +16,7 @@ class AudioStage(Stage):
     def __str__(self) -> str:
         return self.__repr__()
 
-    def __init__(self, _music_duration=5, _audio_duration=2):
+    def __init__(self, _music_duration=15, _audio_duration=2):
         start = time.time()
         # Load the Music Gen model with the CPU if we are not using the GPU, otherwise let Music Gen determine how to load the model
         self.musicgen_model = MusicGen.get_pretrained('facebook/musicgen-small', device="cpu" if not config.UseGpuAudioGen else None)
