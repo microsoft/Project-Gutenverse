@@ -1,0 +1,36 @@
+Hi!  Could you parse some text and identify the following:
+- The start and end of each distinct scene
+- The name of the scene (scene.name) 
+- The body of each scene (scene.body)
+- The starting character index of the scene (scene.start_index)
+- The ending character of the scene (scene.end_index)
+- The start index of the first scene (top level object)
+- The end index of the last scene (top level object)
+
+Please use JSON as the output format to aggregate a collection of scene(s).  Here is a sample of the schema you should use:
+
+{
+  "start_index": 157,
+  "end_index": 24350,
+
+  "scenes": [
+    {  
+        "name": "The Tortoise and the Hare",
+        "body": "<story goes here>,
+        "start_index": 157,
+        "end_index": 835
+    },
+    {  
+        "name": "The Fox and the Scorpion",
+        "body": "<story goes here>,
+        "start_index": 835,
+        "end_index": 1876
+    }
+  ]
+}
+
+Though please avoid using any line breaks in the JSON formatting.
+
+Below is the text to parse:
+
+{{story_data}}

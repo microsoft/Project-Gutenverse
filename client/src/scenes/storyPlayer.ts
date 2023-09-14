@@ -16,7 +16,7 @@ export class StoryPlayer {
     public async playScene() {
         console.log('in play scene, curr index is', this.currentSceneIndex, 'max length', this.storyContent.scenes.length);
         this.player.currentTextIndex = 0;
-        this.player.textToPlay = this.storyContent.scenes[this.currentSceneIndex].speech;
+        this.player.textToPlay = this.storyContent.scenes[this.currentSceneIndex].speech || [];
         this.player.updateText();
 
         if (this.storyContent.scenes[this.currentSceneIndex].music) {

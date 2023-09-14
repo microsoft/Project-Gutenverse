@@ -20,12 +20,12 @@ export class BasicStorybookScene implements SceneClass {
         const {scene, shadowGenerator} = sceneArgs;
         
         if (this.envUrl) {
-            const texture = new Texture(this.envUrl);
+            const texture = new Texture("http://localhost:5000" + this.envUrl);
             (sceneArgs.world.material! as any).emissiveTexture = texture;
         }
 
         if (this.stageUrl) {
-            const stageTexture = new Texture(this.stageUrl);
+            const stageTexture = new Texture("http://localhost:5000" + this.stageUrl);
             (sceneArgs.stage.material! as any).emissiveTexture = stageTexture;
         }
 

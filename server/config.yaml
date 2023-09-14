@@ -1,0 +1,4 @@
+stories_dir: "stories"
+OpenAIApiKey: "EnvironmentVariables"
+MongoDBConnectionString: "EnvironmentVariables"
+UseGpu: true

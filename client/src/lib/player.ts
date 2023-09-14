@@ -23,9 +23,11 @@ export class Player {
     public isSoundPlaying = true;
 
     constructor(public scene: Scene, public textToPlay: TextFormat[], public previousSceneCallback?: Callback, public nextSceneCallback?: Callback, public sound?: Sound) {
-        AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#8").then((gui) => {
+        AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#12").then((gui) => {
             this.speechGui = gui;
             gui.layer!.applyPostProcess = false;
+            this.openSettingsButton = gui.getControlByName("OpenSettings")!;
+
             this.speechBubble = gui.getControlByName("SpeechBlock")!;
             this.forwardButton = gui.getControlByName("Foward")!;
             this.forwardButton.onPointerUpObservable.add(() => {
@@ -70,18 +72,17 @@ export class Player {
                     this.nextSceneButton!.isEnabled = true;
                 });
             }
-            this.updateText();
-
-            
+            this.updateText();            
         });
 
-        AdvancedDynamicTexture.ParseFromSnippetAsync("#JF6IFS#7").then((gui) => {
+        AdvancedDynamicTexture.ParseFromSnippetAsync("#JF6IFS#8").then((gui) => {
+            gui.layer!.applyPostProcess = false;
+            
             this.settingsModal = gui.getControlByName("SettingsModal")!;
             this.settingsModal.isVisible = false;
 
             // Open Settings Modal
-            this.openSettingsButton = gui.getControlByName("OpenSettings")!;
-            this.openSettingsButton.onPointerUpObservable.add(() => {
+            this.openSettingsButton?.onPointerUpObservable.add(() => {
                 console.log('clicked on open settings');
                 if (this.settingsModal) {
                     this.settingsModal.isVisible = true;
@@ -114,33 +115,41 @@ export class Player {
 
     updateSound = (sound: Sound) => {
         this.sound = sound;
-        this.playSoundButton = this.speechGui?.getControlByName("PlaySound");
-        this.stopSoundButton = this.speechGui?.getControlByName("StopSound");
+        if (!this.speechGui) {
+            return;
+        }
+        // Single spot for play/pause button that changes based on play/pause status
+        this.playSoundButton = this.speechGui.getControlByName("Play");
+        this.stopSoundButton = this.speechGui.getControlByName("Pause");
         if (!this.playSoundButton || !this.stopSoundButton) {
             return;
         }
+        // adding the false in if statement for testing purposes
         if (!this.sound) {
-            this.playSoundButton.isVisible = false;
-            this.stopSoundButton.isVisible = false;
+            this.playSoundButton!.isVisible = false;
+            this.stopSoundButton!.isVisible = false;
         } else {
-            console.log('set up play and stop sound button');
-            this.playSoundButton.onPointerUpObservable.add(() => {
-                if (!this.isSoundPlaying) {
-                    console.log('clicked on play sound button');
-                    this.sound!.play();
-                    this.isSoundPlaying = true;
-                }
-            });
+            // assuming autoplay sound when scene starts
+            this.playSoundButton.isVisible = false;
+
             this.stopSoundButton.onPointerUpObservable.add(() => {
                 console.log('clicked on stop sound button');
+                this.stopSoundButton!.isVisible = false;
+                this.playSoundButton!.isVisible = true;
                 this.sound!.stop();
-                this.isSoundPlaying = false;
+            });
+
+            this.playSoundButton.onPointerUpObservable.add(() => {
+                console.log('clicked on play sound button');
+                this.playSoundButton!.isVisible = false;
+                this.stopSoundButton!.isVisible = true;
+                this.sound!.play();
             });
         }
     }
 
     updateText() {
-        if (this.text) {
+        if (this.text && this.textToPlay) {
             const character = this.textToPlay[this.currentTextIndex].character;
             const text = this.textToPlay[this.currentTextIndex].text;
             this.text.text = `${character}: ${text}`;
