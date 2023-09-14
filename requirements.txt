@@ -15,7 +15,6 @@ diffusers==0.20.2
 dnspython==2.4.2
 filelock==3.12.3
 Flask==2.3.2
-flask_cors==4.0.0
 flatbuffers==23.5.26
 frozenlist==1.4.0
 fsspec==2023.9.0
