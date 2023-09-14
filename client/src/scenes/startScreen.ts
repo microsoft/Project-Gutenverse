@@ -208,12 +208,6 @@ export class StartScreen implements SceneClass {
                 
             });
             
-
-            // THIS IS JUST FOR MOCK DATA
-            // TODO: FIx my machine so I can use real data
-
-
-            
             // === CREATE STORY MENU ===
 
             // Setup the buttons in the Create Story menu
