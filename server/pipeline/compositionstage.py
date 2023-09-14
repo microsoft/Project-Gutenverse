@@ -1,3 +1,4 @@
+from loguru import logger
 from stage import Stage
 from config import config
 import json
@@ -18,6 +19,10 @@ class CompositionStage(Stage):
         # For each subfolder in the story_folder
         for subfolder in sorted(os.listdir(story_folder)):
             subfolder_path = os.path.join(story_folder, subfolder)
+            save_file_path = os.path.join(subfolder_path, '4_composition_stage.json')
+            if os.path.isfile(save_file_path):
+                logger.info(f"{self} step found to be already completed for " + subfolder)
+                continue
             
             # Check if the path is a directory and contains the required JSON file
             if os.path.isdir(subfolder_path) and '1_analysis_stage.json' in os.listdir(subfolder_path):
@@ -39,8 +44,7 @@ class CompositionStage(Stage):
 
                     llmOutput = llm.get_composition(story_content=storycontent, characters=json.dumps(characters))
                     character_composition_data = json.loads(llmOutput)
-
-                    save_file_path = os.path.join(subfolder_path, '4_composition_stage.json')
+                    
                     with open(save_file_path, 'w') as output_file:
                         json.dump(character_composition_data, output_file, indent=4)
 
