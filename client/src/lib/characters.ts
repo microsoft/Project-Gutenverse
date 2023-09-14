@@ -1,12 +1,18 @@
 import {
+    ActionManager,
     Camera,
+    Color3,
+    ExecuteCodeAction,
+    HighlightLayer,
     Mesh,
     MeshBuilder,
     NodeMaterial,
+    PlaySoundAction,
     Quaternion,
     Scene,
     ShadowDepthWrapper,
     ShadowGenerator,
+    Sound,
     StandardMaterial,
     Texture,
     TextureBlock,
@@ -25,6 +31,8 @@ export type CharacterData = {
     height: number;
     distanceFromGround: number;
 };
+
+import soundUrl from "../../public/assets/audio/671175__tgerginov__magic.wav";
 
 export class Character {
     public sprite?: Mesh;
@@ -48,6 +56,30 @@ export class Character {
                 this.data.name,
                 { width: this.data.width*SIZE_MULT, height: this.data.height*SIZE_MULT },
                 this.scene
+            );
+            const hightlight = new HighlightLayer("hl" + this.data.name, this.scene);
+            const sound = new Sound("plim", soundUrl);
+            sprite1.actionManager = new ActionManager(this.scene);
+            sprite1.actionManager.registerAction(
+                new PlaySoundAction(
+                    ActionManager.OnPickTrigger,
+                    sound
+                ));
+            sprite1.actionManager.registerAction(
+                new ExecuteCodeAction(
+                    ActionManager.OnPointerOverTrigger,
+                    () => {
+                        hightlight.addMesh(sprite1, Color3.Green());
+                    }
+                )
+            );
+            sprite1.actionManager.registerAction(
+                new ExecuteCodeAction(
+                    ActionManager.OnPointerOutTrigger,
+                    () => {
+                        hightlight.removeMesh(sprite1);
+                    }
+                )
             );
             const material1 = await NodeMaterial.ParseFromSnippetAsync(
                 "#0HR986#1"
