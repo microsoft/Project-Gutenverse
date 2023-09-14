@@ -43,13 +43,13 @@ class SkyboxGenStage(Stage):
                     data = json.load(file)
                     setting = data.get('setting', {})
                     skybox_gen_data = {"skybox": {}}
-                    
-                    skybox_prompt = " ".join([setting["location"],
+                    visual_style = data.get('visual_style', '')
+                    skybox_prompt = ", ".join([setting["location"],
                                              setting["timeofday"],
                                              setting["weather"],
                                              setting["visualelements"],
-                                             "beautiful",
-                                             "stunning"])
+                                             "masterpiece",
+                                             visual_style])
 
                     flat_skybox_name = self.generate_image(subfolder_path, "skybox", skybox_prompt)
                     image_filepath = self.create_pseudo_360(subfolder_path, flat_skybox_name, os.path.join(subfolder_path, "skybox_360.png"))

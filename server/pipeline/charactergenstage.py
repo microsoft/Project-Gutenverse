@@ -41,7 +41,7 @@ class CharacterGenStage(Stage):
                 with open(json_path, 'r') as file:
                     data = json.load(file)
                     characters = data.get('characters', {})
-                    
+                    visual_style = data.get('visual_style', '')
                     character_gen_data = {"characters": {}}
                     
                     # For each character in the JSON
@@ -54,7 +54,7 @@ class CharacterGenStage(Stage):
                             summary = description.get('summary', '')
                         else:
                             appearance = summary = description
-
+                        appearance += ', ' + visual_style
                         image_filepath = self.generate_image(subfolder_path, character_name, appearance)
                         character_gen_data['characters'][character_name] = {
                             "summary": summary,

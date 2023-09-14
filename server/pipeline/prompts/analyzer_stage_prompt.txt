@@ -1,7 +1,8 @@
-Hi!  Could you parse some text and extract the  following:
+Hi! Could you parse some text and extract the following:
 - The protagonists / main characters and a description of their appearance for the purpose of generating images of the characters
 - A description of the setting for the purpose of generating a skybox image
 - A list of adjectives describing the mood for background music / suggestion of appropriate ambient audio sound effects
+- A visual style to use for any art related to the story
 
 Please use JSON as the output format and use specifics for descriptions rather than a speculation.  Here is a sample of the schema you should use:
 
@@ -20,7 +21,7 @@ Please use JSON as the output format and use specifics for descriptions rather t
 	"location": "A natural wilderness setting, such as a savanna, grassland, or forest.",
 	"timeofday": "Since the lion was asleep at the beginning, it could be early morning or late ",
 	"weather": "A clear sky or partly cloudy sky",
-	"visualelements": "The presence of the lion and mouse, ropes binding the lion, and possibly some trees, grass, or rocks."
+	"visualelements": "The presence of ropes that could bind a lion, and possibly some trees, grass, or rocks."
   },
   "audio": {
 	"mood": "Tense, suspenseful, and ultimately triumphant music",
@@ -29,7 +30,8 @@ Please use JSON as the output format and use specifics for descriptions rather t
 		"2": "Sounds of hunters, ropes tightening.",
 		"3": "Sound of gnawing, ropes snapping, and triumph as the lion is freed."
 	}
-  }
+  },
+  "visualstyle": "hyperrealistic, grimdark, gritty"
 }
 
 Though please avoid using any line breaks in the JSON formatting.
