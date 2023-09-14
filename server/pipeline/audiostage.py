@@ -16,7 +16,7 @@ class AudioStage(Stage):
     def __str__(self) -> str:
         return self.__repr__()
 
-    def __init__(self, _music_duration=5, _audio_duration=2):
+    def __init__(self, _music_duration=15, _audio_duration=2):
         start = time.time()
         # Load the Music Gen model with the CPU if we are not using the GPU, otherwise let Music Gen determine how to load the model
         self.musicgen_model = MusicGen.get_pretrained('facebook/musicgen-small', device="cpu" if not config.UseGpuAudioGen else None)
@@ -54,29 +54,38 @@ class AudioStage(Stage):
 
                 if '1_analysis_stage.json' in os.listdir(subfolder_path):
                     json_path = os.path.join(subfolder_path, '1_analysis_stage.json')
-
                     # Read the JSON file
                     with open(json_path, 'r') as file:
                         data = json.load(file)
                         audio_data = data.get('audio', {})
                         mood_music = audio_data.get('mood', {})
-                        sequence = audio_data.get('sequence', {})        
-                        sound_effects = list(sequence.values())
+                        sequence = audio_data.get('sequence', {})
+                        story_sound_effects = list(sequence.values())
+
+                        character_data = data.get('characters', {})
+                        characters = list(character_data.keys())
+                        character_sound_effects = []
+                        for character in characters:
+                            character_sound_effects.append(character_data[character]["soundeffect"])
 
                         self.generate_music(mood_music, subfolder_path, music_filename)
-                        self.generate_audio(sound_effects, subfolder_path, audio_filename)
-
+                        self.generate_story_audio(story_sound_effects, subfolder_path, audio_filename)
+                        self.generate_characters_audio(character_sound_effects, subfolder_path, characters)
+                        
                         json_data["audio"]["mood"] = mood_music
                         json_data["audio"]["sequence"] = sequence
                         json_data["audio"]["music_file"] = f"{music_filename}.wav"
 
                         json_data["audio"]["audio_files"] = {}
-                        for idx in range(len(sound_effects)):
+                        for idx in range(len(story_sound_effects)):
                             json_data["audio"]["audio_files"][idx+1] = f"{audio_filename}_sequence_{idx+1}.wav"
+
+                        json_data["audio"]["character_sound_effects"] = {}
+                        for character in characters:
+                            json_data["audio"]["character_sound_effects"][character] = f"{character}.wav"
 
                 if 'scene.json' in os.listdir(subfolder_path):
                     json_path = os.path.join(subfolder_path, 'scene.json')
-
                     # Read the JSON file
                     with open(json_path, 'r') as file:
                         data = json.load(file)
@@ -103,15 +112,28 @@ class AudioStage(Stage):
         filepath = os.path.join(path, filename)
         audio_write(filepath, wav[0].cpu(), self.musicgen_model.sample_rate, strategy="loudness", loudness_compressor=True)
 
-    def generate_audio(self, audio_prompt, path, filename):
-        logger.info("AudioGen model about to generate...")
+    def generate_story_audio(self, story_audio_prompt, path, filename):
+        logger.info("AudioGen model about to generate for story...")
         start = time.time()
-        wav = self.audiogen_model.generate(audio_prompt)  # generates samples.
+        wav = self.audiogen_model.generate(story_audio_prompt)  # generates samples.
         end = time.time()
         logger.info(f"AudioGen Generation took {end-start} seconds")
 
         for idx, one_wav in enumerate(wav):
             filepath = os.path.join(path, f"{filename}_sequence_{idx+1}")
+            audio_write(filepath, one_wav.cpu(), self.audiogen_model.sample_rate, strategy="loudness", loudness_compressor=True)
+
+    def generate_characters_audio(self, characters_audio_prompt, path, filenames):
+        logger.info("AudioGen model about to generate for characters...")
+        print(characters_audio_prompt)
+        print(filenames)
+        start = time.time()
+        wav = self.audiogen_model.generate(characters_audio_prompt)  # generates samples.
+        end = time.time()
+        logger.info(f"AudioGen Generation took {end-start} seconds")
+
+        for idx, one_wav in enumerate(wav):
+            filepath = os.path.join(path, f"{filenames[idx]}")
             audio_write(filepath, one_wav.cpu(), self.audiogen_model.sample_rate, strategy="loudness", loudness_compressor=True)
 
     def generate_tts(self, tts_prompt, path, filename):

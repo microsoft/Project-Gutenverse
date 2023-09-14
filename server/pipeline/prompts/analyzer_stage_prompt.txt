@@ -1,5 +1,5 @@
 Hi! Could you parse some text and extract the following:
-- The protagonists / main characters and a description of their appearance for the purpose of generating images of the characters
+- The protagonists / main characters and a description of their appearance for the purpose of generating images of the characters / a relevant sound effect that represents the character
 - A description of the setting for the purpose of generating a skybox image
 - A list of adjectives describing the mood for background music / suggestion of appropriate ambient audio sound effects
 - A visual style to use for any art related to the story
@@ -10,11 +10,13 @@ Please use JSON as the output format and use specifics for descriptions rather t
   "characters": {
 	"The Lion": {
 		"summary" : "A powerful and proud animal who is initially skeptical of the mouse's ability to help him but is later saved by the mouse",
-		"appearance" : "A large muscular lion with bright orange fur and sharp claws"
+		"appearance" : "A large muscular lion with bright orange fur and sharp claws",
+		"soundeffect" : "The lion has a low, rumbling, growl, followed by a roar"
 	},
 	"The Mouse": {
 		"summary" : "A small and seemingly insignificant creature who shows courage and gratitude by saving the lion.",
-		"appearance" : "A skittish white mouse with matted fur and a bright pink nose"
+		"appearance" : "A skittish white mouse with matted fur and a bright pink nose",
+		"soundeffect" : "The mouse has a high pitched squeak"
 	}
   },
   "setting": {
