@@ -22,7 +22,7 @@ export class Player {
     public speechGui?: AdvancedDynamicTexture;
     public isSoundPlaying = true;
 
-    constructor(public scene: Scene, public textToPlay: TextFormat[], public previousSceneCallback?: Callback, public nextSceneCallback?: Callback, public sound?: Sound) {
+    constructor(public scene: Scene, public textToPlay: TextFormat[], public previousSceneCallback?: Callback, public nextSceneCallback?: Callback, public sound?: Sound, public backgroundMusic?: Sound) {
         AdvancedDynamicTexture.ParseFromSnippetAsync("#CEVEMZ#12").then((gui) => {
             this.speechGui = gui;
             gui.layer!.applyPostProcess = false;
@@ -113,6 +113,10 @@ export class Player {
         });
     }
 
+    updateBackgroundMusic = (music: Sound) => {
+        this.backgroundMusic = music;
+    }
+
     updateSound = (sound: Sound) => {
         this.sound = sound;
         if (!this.speechGui) {
@@ -136,14 +140,16 @@ export class Player {
                 console.log('clicked on stop sound button');
                 this.stopSoundButton!.isVisible = false;
                 this.playSoundButton!.isVisible = true;
-                this.sound!.stop();
+                this.sound?.stop();
+                this.backgroundMusic?.stop();
             });
 
             this.playSoundButton.onPointerUpObservable.add(() => {
                 console.log('clicked on play sound button');
                 this.playSoundButton!.isVisible = false;
                 this.stopSoundButton!.isVisible = true;
-                this.sound!.play();
+                this.sound?.play();
+                this.backgroundMusic?.play();
             });
         }
     }

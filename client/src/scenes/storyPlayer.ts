@@ -8,6 +8,7 @@ export class StoryPlayer {
     public player: Player;
     public currSceneElements?: BasicStorybookScene;
     public currSceneSound?: Sound;
+    public currSceneBackgroundMusic?: Sound;
 
     constructor(public storyContent: any, public sceneArgs: SceneArgs) {
         this.player = new Player(this.sceneArgs.scene, [], () => this.previousScene(), () => this.nextScene());
@@ -16,17 +17,25 @@ export class StoryPlayer {
     public async playScene() {
         console.log('in play scene, curr index is', this.currentSceneIndex, 'max length', this.storyContent.scenes.length);
         this.player.currentTextIndex = 0;
-        this.player.textToPlay = this.storyContent.scenes[this.currentSceneIndex].speech || [];
+        this.player.textToPlay = this.storyContent.scenes[this.currentSceneIndex]["speech"] || [];
         this.player.updateText();
 
         if (this.storyContent.scenes[this.currentSceneIndex].music) {
-            console.log('loading sound from url', this.storyContent.scenes[this.currentSceneIndex].music);
-            this.currSceneSound = new Sound("backgroundMusic", this.storyContent.scenes[this.currentSceneIndex].music, this.sceneArgs.scene, () => {
+            console.log('loading sound from url', "http://localhost:5000" + this.storyContent.scenes[this.currentSceneIndex].music);
+            this.currSceneBackgroundMusic = new Sound("backgroundMusic", "http://localhost:5000" + this.storyContent.scenes[this.currentSceneIndex].music, this.sceneArgs.scene, () => {
+                this.currSceneBackgroundMusic!.play();
+                this.currSceneBackgroundMusic?.setVolume(.1);
+                this.player.updateBackgroundMusic(this.currSceneBackgroundMusic!);
+            }, {loop: true});
+        }
+
+        if (this.storyContent.scenes[this.currentSceneIndex].tts) {
+            console.log('loading text to speech from url', "http://localhost:5000" + this.storyContent.scenes[this.currentSceneIndex].tts);
+            this.currSceneSound = new Sound("backgroundMusic", "http://localhost:5000" + this.storyContent.scenes[this.currentSceneIndex].tts, this.sceneArgs.scene, () => {
                 this.currSceneSound!.play();
                 this.player.updateSound(this.currSceneSound!);
             }, {loop: true});
         }
-
         const sceneElements = new BasicStorybookScene();
         this.currSceneElements = sceneElements;
         sceneElements.characters = this.storyContent.scenes[this.currentSceneIndex].characters;
@@ -37,6 +46,10 @@ export class StoryPlayer {
     }
 
     public disposeScene() {
+        if (this.currSceneBackgroundMusic) {
+            this.currSceneBackgroundMusic.dispose();
+        }
+        
         if (this.currSceneSound) {
             this.currSceneSound.dispose();
         }
