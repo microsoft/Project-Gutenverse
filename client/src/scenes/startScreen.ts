@@ -3,15 +3,17 @@ import { Callback, SceneArgs, SceneClass } from "../createScene";
 import { AdvancedDynamicTexture } from "@babylonjs/gui/2D/advancedDynamicTexture";
 import { Image } from "@babylonjs/gui/2D/controls/image";
 import { TextBlock } from "@babylonjs/gui/2D/controls/textBlock";
+import { TextWrapping } from "@babylonjs/gui/2D/controls/textBlock"
 import { Control } from "@babylonjs/gui/2D/controls/control";
 import {Button } from "@babylonjs/gui/2D/controls/button";
 import { InputTextArea } from "@babylonjs/gui/2D/controls/inputTextArea"
 import { Grid } from "@babylonjs/gui/2D/controls/grid"
-import {StackPanel } from "@babylonjs/gui/2D/controls/stackPanel"
-import {ScrollViewer} from "@babylonjs/gui/2D/controls/scrollViewers/scrollViewer"
+import { StackPanel } from "@babylonjs/gui/2D/controls/stackPanel"
+import { ScrollViewer } from "@babylonjs/gui/2D/controls/scrollViewers/scrollViewer"
 
 import menuBackgroundUrl from "../../public/assets/menu_background.jpg";
-import menuButtonBackgroundUrl from "../../public/assets/textures/old_paper_texture.png"
+import normalButtonBackgroundUrl from "../../public/assets/textures/old_paper_texture_01.png";
+import storyButtonBackgroundUrl from "../../public/assets/textures/old_paper_texture_02.png";
 import blackButtonBackgroundUrl from "../../public/assets/textures/black_paper_texture_01.png"
 import { StoryPlayer } from "./storyPlayer";
 import { GetClass, RegisterClass } from "@babylonjs/core";
@@ -28,17 +30,22 @@ export class StartScreen implements SceneClass {
         RegisterClass("BABYLON.GUI.Grid", Grid);
         RegisterClass("BABYLON.GUI.ScrollViewer", ScrollViewer);
 
-        await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#57").then((gui) => {
+        await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#67").then((gui) => {
             this.gui = gui;
 
             // We need to create the text input field, as it is used in other functions
             const intputTextDefault = "Create a story";
             const inputTextContainer = gui.getControlByName("CreateStoryGrid")! as Grid;
+
+            const inputNameArea = gui.getControlByName("InputText_Name")! as InputTextArea;
+
             const inputTextArea = new InputTextArea('Example InputTextArea', intputTextDefault);
             inputTextArea.width = "99%";
             inputTextArea.height = "80%";
             inputTextArea.color = "white";
-            inputTextContainer.addControl(inputTextArea, 1, 0);
+            inputTextArea.thickness = 0;
+
+            inputTextContainer.addControl(inputTextArea, 2, 0);
 
             // Add Background Image
             const backgroundImage = new Image("backgroundImage", menuBackgroundUrl);
@@ -64,6 +71,7 @@ export class StartScreen implements SceneClass {
                 buttonImage.width = 1;
                 buttonImage.height = 1;
                 buttonImage.stretch = Image.STRETCH_FILL;
+                button.thickness = 0;
                 button.addControl(buttonImage);
 
                 // Now make the text
@@ -74,10 +82,14 @@ export class StartScreen implements SceneClass {
                 buttonText.fontFamily = fontFamly;
                 buttonText.fontSize = fontSize;
                 buttonText.fontWeight
+                buttonText.textWrapping = TextWrapping.Ellipsis;
+
                 if (isBold) {
                     buttonText.fontWeight = "bold";
                 }
                 button.addControl(buttonText);
+
+                return buttonText;
             }
 
             const btnFontWhite = "white";
@@ -91,22 +103,22 @@ export class StartScreen implements SceneClass {
 
             // Setup the buttons in Main menu
             const button_mainMenuChooseStoryButton = gui.getControlByName("Button_MainMenu_ChooseStory")! as Button;
-            setupButtonVisuals(button_mainMenuChooseStoryButton, "Choose Story", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+            setupButtonVisuals(button_mainMenuChooseStoryButton, "Choose Story", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, normalButtonBackgroundUrl);
 
             const button_mainMenuCreateStoryButton = gui.getControlByName("Button_MainMenu_CreateStory")! as Button;
-            setupButtonVisuals(button_mainMenuCreateStoryButton, "Create Story", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+            setupButtonVisuals(button_mainMenuCreateStoryButton, "Create Story", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, normalButtonBackgroundUrl);
 
             const button_mainMenuExitButton = gui.getControlByName("Button_MainMenu_Exit")! as Button;
-            setupButtonVisuals(button_mainMenuExitButton, "Exit", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+            setupButtonVisuals(button_mainMenuExitButton, "Exit", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, normalButtonBackgroundUrl);
             
             const button_mainMenuExitConfirmButton = gui.getControlByName("Button_ConfirmExit")! as Button;
-            setupButtonVisuals(button_mainMenuExitConfirmButton, "Yes", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+            setupButtonVisuals(button_mainMenuExitConfirmButton, "Yes", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, normalButtonBackgroundUrl);
 
             const button_mainMenuExitCancelButton = gui.getControlByName("Button_CancelExit")! as Button;
-            setupButtonVisuals(button_mainMenuExitCancelButton, "No", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+            setupButtonVisuals(button_mainMenuExitCancelButton, "No", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, normalButtonBackgroundUrl);
             
             const button_createStory = gui.getControlByName("Button_CreateStoryLaunch")! as Button;
-            setupButtonVisuals(button_createStory, "Upload", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+            setupButtonVisuals(button_createStory, "Upload", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, normalButtonBackgroundUrl);
 
             const openMainMenu = function(){
                 mainMenu.isVisible = true;
@@ -134,6 +146,7 @@ export class StartScreen implements SceneClass {
                 mainMenu.isVisible = false;
                 chooseStoryMenu.isVisible = false;
                 createStoryMenu.isVisible = true;
+                inputNameArea.text = "Name";
                 inputTextArea.text = intputTextDefault;
             }
 
@@ -155,11 +168,6 @@ export class StartScreen implements SceneClass {
             button_closeMenuChooseStory.onPointerUpObservable.add(openMainMenu);
 
             const stackButtonContainer = gui.getControlByName("StackPanel_StoryButtons")! as StackPanel;
-
-            // Use this to make the visuals of each story button. Cannot use real da
-
-            // TODO: Replace using real data 
-            // Fetching stories from the web service
             
             const storyRequest = fetch("http://127.0.0.1:5000/stories/disk");
             storyRequest.then(response => {
@@ -178,7 +186,8 @@ export class StartScreen implements SceneClass {
                         const storyId: string = story.Id;
                         storyButton.width = "95%";
                         storyButton.height = "60px";
-                        setupButtonVisuals(storyButton, story.Title, btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+                        storyButton.cornerRadius = 6;
+                        setupButtonVisuals(storyButton, story.Title, btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, storyButtonBackgroundUrl);
 
                         storyButton.onPointerUpObservable.add(() => {
                             const storyRequest = fetch("http://127.0.0.1:5000/stories/" + storyId + "/scene");
