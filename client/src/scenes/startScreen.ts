@@ -3,12 +3,13 @@ import { Callback, SceneArgs, SceneClass } from "../createScene";
 import { AdvancedDynamicTexture } from "@babylonjs/gui/2D/advancedDynamicTexture";
 import { Image } from "@babylonjs/gui/2D/controls/image";
 import { TextBlock } from "@babylonjs/gui/2D/controls/textBlock";
+import { TextWrapping } from "@babylonjs/gui/2D/controls/textBlock"
 import { Control } from "@babylonjs/gui/2D/controls/control";
 import {Button } from "@babylonjs/gui/2D/controls/button";
 import { InputTextArea } from "@babylonjs/gui/2D/controls/inputTextArea"
 import { Grid } from "@babylonjs/gui/2D/controls/grid"
-import {StackPanel } from "@babylonjs/gui/2D/controls/stackPanel"
-import {ScrollViewer} from "@babylonjs/gui/2D/controls/scrollViewers/scrollViewer"
+import { StackPanel } from "@babylonjs/gui/2D/controls/stackPanel"
+import { ScrollViewer } from "@babylonjs/gui/2D/controls/scrollViewers/scrollViewer"
 
 import menuBackgroundUrl from "../../public/assets/menu_background.jpg";
 import menuButtonBackgroundUrl from "../../public/assets/textures/old_paper_texture.png"
@@ -64,6 +65,7 @@ export class StartScreen implements SceneClass {
                 buttonImage.width = 1;
                 buttonImage.height = 1;
                 buttonImage.stretch = Image.STRETCH_FILL;
+                button.thickness = 0;
                 button.addControl(buttonImage);
 
                 // Now make the text
@@ -74,6 +76,7 @@ export class StartScreen implements SceneClass {
                 buttonText.fontFamily = fontFamly;
                 buttonText.fontSize = fontSize;
                 buttonText.fontWeight
+                buttonText.textWrapping = TextWrapping.Ellipsis;
                 if (isBold) {
                     buttonText.fontWeight = "bold";
                 }
@@ -178,6 +181,7 @@ export class StartScreen implements SceneClass {
                         const storyId: string = story.Id;
                         storyButton.width = "95%";
                         storyButton.height = "60px";
+                        storyButton.cornerRadius = 6;
                         setupButtonVisuals(storyButton, story.Title, btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
 
                         storyButton.onPointerUpObservable.add(() => {
