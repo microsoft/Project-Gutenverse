@@ -17,7 +17,7 @@ import { StartScreen } from "./scenes/startScreen";
 
 import testRamp from "../public/assets/testramp.png";
 
-const DEBUG = false;
+const DEBUG = true;
 
 import storyContent from "../public/assets/scenes/princessAndDragon.json";
 import { StoryPlayer } from "./scenes/storyPlayer";

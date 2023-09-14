@@ -55,6 +55,33 @@ export class StartScreen implements SceneClass {
             const backgroundImageContainer =  gui.getControlByName("BackgroundImageGrid")! as Grid;
             backgroundImageContainer.addControl(backgroundImage);
 
+            const uploadButton = gui.getControlByName("Button_CreateStoryLaunch");
+            uploadButton?.onPointerClickObservable.addOnce(() => {
+                // Extract title and body from input fields
+                // const storyTitle = titleInputTextArea.text;
+                const storyTitle = "User Submitted_" + new Date().getMilliseconds()
+                const storyBody = inputTextArea.text;
+
+                // Create the JSON payload
+                const payload = {
+                    "title": storyTitle,
+                    "body": storyBody
+                };
+
+                // Send POST request
+                fetch('http://localhost:5000/stories', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                }).then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
+                
+                window.alert("Your story has been submitted for processing! It will appear in the list of stories in 10-20 minutes.");
+                // TODO: inform the user that their story has been submitted for processing!  It will appear in the list of stories in 10-20 minutes!
+            });
 
             // === MAIN MENU ===
             

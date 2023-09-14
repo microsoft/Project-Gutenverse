@@ -8,9 +8,9 @@ Character's "distance_from_the_floor": If the character is grounded, this should
 
 Character's "distance_from_camera": always 60.
 
-Character's "scale_x": always 5.
+Character's "scale_x": always 1.
 
-Character's "scale_y": always 5.
+Character's "scale_y": always 1.
 
 You should give the output as json format like this:
 ```
