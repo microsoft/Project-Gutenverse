@@ -69,7 +69,12 @@ class SkyboxGenStage(Stage):
         filename = f"{skybox_name.replace(' ', '')}.png"
         prompt = appearance
         negative_prompt = "low quality"
-        image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt, width=1024, height=512)
+
+        if (config.UseGpuImageGen):
+            image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt, width=1024, height=512)
+        else:
+            image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt, width=512, height=512)
+
         imagePath = os.path.join(subfolder_path, filename)
         image.save(imagePath)
         return filename
@@ -80,16 +85,27 @@ class SkyboxGenStage(Stage):
         image = Image.open(imagePath)
         original_width, original_height = image.size
         
-        # Flip the image and append to the right
-        flipped_image = image.transpose(Image.FLIP_LEFT_RIGHT)
-        new_width = original_width * 2
-        new_image = Image.new("RGB", (new_width, original_height))
-        new_image.paste(image, (0, 0))
-        new_image.paste(flipped_image, (original_width, 0))
+        # flip twice if not using GpuImageGen because image width is only 512
+        times_to_flip = 1
+        if not config.UseGpuImageGen:
+            times_to_flip = 2
+
+        for _ in range(times_to_flip):
+            # Flip the image and append to the right
+            flipped_image = image.transpose(Image.FLIP_LEFT_RIGHT)
+            new_width = original_width * 2
+            new_image = Image.new("RGB", (new_width, original_height))
+            new_image.paste(image, (0, 0))
+            new_image.paste(flipped_image, (original_width, 0))
+
+            # update width and image
+            if times_to_flip > 1:
+                image = new_image
+                original_width = new_width
         
         # Add padding to the top and bottom
-        top_padding = int(original_height * 1.5)
-        bottom_padding = int(original_height * 1.2)
+        top_padding = int(original_height * 0.2)
+        bottom_padding = int(original_height * 0.6)
         padded_height = original_height + top_padding + bottom_padding
         final_image = Image.new("RGB", (new_width, padded_height), (0, 0, 0))
         final_image.paste(new_image, (0, top_padding))

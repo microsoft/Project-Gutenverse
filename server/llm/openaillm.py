@@ -72,7 +72,8 @@ class OpenAiLLM:
             messages=[{
                 "role": "user",
                 "content": prompt
-            }]
+            }],
+            temperature=0.3,
         )
 
 llm = OpenAiLLM()
