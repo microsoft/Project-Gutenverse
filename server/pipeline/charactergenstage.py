@@ -54,8 +54,8 @@ class CharacterGenStage(Stage):
                             summary = description.get('summary', '')
                         else:
                             appearance = summary = description
-                        appearance += ', full body, '
-                        appearance += visual_style
+                        appearance += ', full body'
+                        appearance += ', ' + visual_style
                         image_filepath = self.generate_image(subfolder_path, character_name, appearance)
                         character_gen_data['characters'][character_name] = {
                             "summary": summary,
