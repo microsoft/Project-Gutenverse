@@ -48,7 +48,7 @@ export class Character {
         );
         const material1 = await NodeMaterial.ParseFromSnippetAsync("#0HR986#1");
         this.material = material1;
-        const inputTex = new Texture(this.data.imageUrl, this.scene);
+        const inputTex = new Texture("http://localhost:5000" + this.data.imageUrl, this.scene);
         const texBlock = material1.getBlockByName("Texture") as TextureBlock;
         texBlock.texture = inputTex;
         material1.backFaceCulling = false;

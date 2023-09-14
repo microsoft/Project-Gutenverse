@@ -10,6 +10,7 @@ import { Grid } from "@babylonjs/gui/2D/controls/grid"
 import {StackPanel } from "@babylonjs/gui/2D/controls/stackPanel"
 
 import menuBackgroundUrl from "../../public/assets/menu_background.jpg";
+import { StoryPlayer } from "./storyPlayer";
 
 export interface StartScreenArgs {
     chooseStoryCallback: Callback;
@@ -52,6 +53,8 @@ export class StartScreen implements SceneClass {
             const button_mainMenuExitButton = gui.getControlByName("Button_MainMenu_Exit")! as Button;
             const button_mainMenuExitConfirmButton = gui.getControlByName("Button_ConfirmExit")! as Button;
             const button_mainMenuExitCancelButton = gui.getControlByName("Button_CancelExit")! as Button;
+            const rootGrid =  gui.getControlByName("RootGrid")! as Control;
+            const button_createStory = gui.getControlByName("Button_CreateStoryLaunch")! as Button;
 
             const openMainMenu = function(){
                 mainMenu.isVisible = true;
@@ -114,12 +117,28 @@ export class StartScreen implements SceneClass {
                     //Iterating through the fetched stories and creating buttons
                     stories.forEach((story: {Id: string, Title: string} )=> {
                         const storyButton = Button.CreateSimpleButton(story.Id, story.Title);
+                        const storyId: string = story.Id;
                         storyButton.width = "95%";
                         storyButton.height = "60px";
                         storyButton.color = "white";
                         storyButton.background = "black";  // Modify the appearance as needed
                         storyButton.onPointerUpObservable.add(() => {
-                            // Add your on-click logic here. For instance, navigating to the story scene.
+                            const storyRequest = fetch("http://127.0.0.1:5000/stories/" + storyId + "/scene");
+                            storyRequest.then(response => {
+                                if (!response.ok) {
+                                    throw new Error("Failed to fetch scenes for story: " + storyId);
+                                }
+
+                                const scenesPromise = response.json();
+                                scenesPromise.then(scenes => {
+                                    console.log(scenes);
+                                    rootGrid.isVisible = false;
+                                    backgroundImage.isVisible = false;
+
+                                    const player: StoryPlayer = new StoryPlayer(scenes, sceneArgs);
+                                    player.playScene();
+                                });
+                            });
                         });
         
                         storyButtonContainer.addControl(storyButton);
