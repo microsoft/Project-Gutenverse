@@ -11,6 +11,8 @@ import {StackPanel } from "@babylonjs/gui/2D/controls/stackPanel"
 import {ScrollViewer} from "@babylonjs/gui/2D/controls/scrollViewers/scrollViewer"
 
 import menuBackgroundUrl from "../../public/assets/menu_background.jpg";
+import menuButtonBackgroundUrl from "../../public/assets/textures/old_paper_texture.png"
+import blackButtonBackgroundUrl from "../../public/assets/textures/black_paper_texture_01.png"
 import { StoryPlayer } from "./storyPlayer";
 import { GetClass, RegisterClass } from "@babylonjs/core";
 
@@ -26,8 +28,17 @@ export class StartScreen implements SceneClass {
         RegisterClass("BABYLON.GUI.Grid", Grid);
         RegisterClass("BABYLON.GUI.ScrollViewer", ScrollViewer);
 
-        await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#40").then((gui) => {
+        await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#57").then((gui) => {
             this.gui = gui;
+
+            // We need to create the text input field, as it is used in other functions
+            const intputTextDefault = "Create a story";
+            const inputTextContainer = gui.getControlByName("CreateStoryGrid")! as Grid;
+            const inputTextArea = new InputTextArea('Example InputTextArea', intputTextDefault);
+            inputTextArea.width = "99%";
+            inputTextArea.height = "80%";
+            inputTextArea.color = "white";
+            inputTextContainer.addControl(inputTextArea, 1, 0);
 
             // Add Background Image
             const backgroundImage = new Image("backgroundImage", menuBackgroundUrl);
@@ -47,14 +58,55 @@ export class StartScreen implements SceneClass {
             const chooseStoryMenu = gui.getControlByName("ChooseStoryGrid")!;
             const createStoryMenu = gui.getControlByName("CreateStoryGrid")!;
 
+            const setupButtonVisuals = function(button: Button, title: string, fontColor: string, fontFamly: string, fontSize: number, isBold: boolean, url:  "*.jpg" | "*.png"){
+                // Make image first, so the text appears in front of it
+                var buttonImage = new Image("buttonImage", url);
+                buttonImage.width = 1;
+                buttonImage.height = 1;
+                buttonImage.stretch = Image.STRETCH_FILL;
+                button.addControl(buttonImage);
+
+                // Now make the text
+                var buttonText = new TextBlock("text_" + title, title);
+                buttonText.width = "100.00%";
+                buttonText.height =  "100.00%";
+                buttonText.color = fontColor;
+                buttonText.fontFamily = fontFamly;
+                buttonText.fontSize = fontSize;
+                buttonText.fontWeight
+                if (isBold) {
+                    buttonText.fontWeight = "bold";
+                }
+                button.addControl(buttonText);
+            }
+
+            const btnFontWhite = "white";
+            const btnFontBlack = "black";
+            const btnFontFamily = "MV Boli";
+            const btnSmallFontSize = 22;
+            const btnLargeFontSize = 35;
+            const btnIsBold = false;
+
+            const rootGrid =  gui.getControlByName("RootGrid")! as Control;
+
             // Setup the buttons in Main menu
             const button_mainMenuChooseStoryButton = gui.getControlByName("Button_MainMenu_ChooseStory")! as Button;
+            setupButtonVisuals(button_mainMenuChooseStoryButton, "Choose Story", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+
             const button_mainMenuCreateStoryButton = gui.getControlByName("Button_MainMenu_CreateStory")! as Button;
+            setupButtonVisuals(button_mainMenuCreateStoryButton, "Create Story", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+
             const button_mainMenuExitButton = gui.getControlByName("Button_MainMenu_Exit")! as Button;
+            setupButtonVisuals(button_mainMenuExitButton, "Exit", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+            
             const button_mainMenuExitConfirmButton = gui.getControlByName("Button_ConfirmExit")! as Button;
+            setupButtonVisuals(button_mainMenuExitConfirmButton, "Yes", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+
             const button_mainMenuExitCancelButton = gui.getControlByName("Button_CancelExit")! as Button;
-            const rootGrid =  gui.getControlByName("RootGrid")! as Control;
+            setupButtonVisuals(button_mainMenuExitCancelButton, "No", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+            
             const button_createStory = gui.getControlByName("Button_CreateStoryLaunch")! as Button;
+            setupButtonVisuals(button_createStory, "Upload", btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
 
             const openMainMenu = function(){
                 mainMenu.isVisible = true;
@@ -82,6 +134,7 @@ export class StartScreen implements SceneClass {
                 mainMenu.isVisible = false;
                 chooseStoryMenu.isVisible = false;
                 createStoryMenu.isVisible = true;
+                inputTextArea.text = intputTextDefault;
             }
 
             const quit = function() {
@@ -97,13 +150,17 @@ export class StartScreen implements SceneClass {
             // === CHOOSE STORY MENU ===
 
             // Setup the buttons in the Choose Story menu
-            const button_closeMenuChooseStory = gui.getControlByName("Button_Close_ChooseStory")!;
+            const button_closeMenuChooseStory = gui.getControlByName("Button_Close_ChooseStory")! as Button;
+            setupButtonVisuals(button_closeMenuChooseStory, "Back", btnFontWhite, btnFontFamily, btnSmallFontSize, false, blackButtonBackgroundUrl);
             button_closeMenuChooseStory.onPointerUpObservable.add(openMainMenu);
 
             const stackButtonContainer = gui.getControlByName("StackPanel_StoryButtons")! as StackPanel;
 
+            // Use this to make the visuals of each story button. Cannot use real da
+
             // TODO: Replace using real data 
             // Fetching stories from the web service
+            
             const storyRequest = fetch("http://127.0.0.1:5000/stories/disk");
             storyRequest.then(response => {
                 if (!response.ok) {
@@ -116,12 +173,13 @@ export class StartScreen implements SceneClass {
         
                     //Iterating through the fetched stories and creating buttons
                     stories.forEach((story: {Id: string, Title: string} )=> {
-                        const storyButton = Button.CreateSimpleButton(story.Id, story.Title);
+                        //const storyButton = Button.CreateSimpleButton(story.Id, story.Title);
+                        const storyButton = new Button(story.Id);
                         const storyId: string = story.Id;
                         storyButton.width = "95%";
                         storyButton.height = "60px";
-                        storyButton.color = "white";
-                        storyButton.background = "black";  // Modify the appearance as needed
+                        setupButtonVisuals(storyButton, story.Title, btnFontBlack, btnFontFamily, btnLargeFontSize, btnIsBold, menuButtonBackgroundUrl);
+
                         storyButton.onPointerUpObservable.add(() => {
                             const storyRequest = fetch("http://127.0.0.1:5000/stories/" + storyId + "/scene");
                             storyRequest.then(response => {
@@ -153,16 +211,9 @@ export class StartScreen implements SceneClass {
             // === CREATE STORY MENU ===
 
             // Setup the buttons in the Create Story menu
-            const button_closeMenuCreateStory = gui.getControlByName("Button_Close_CreateStory")!;
+            const button_closeMenuCreateStory = gui.getControlByName("Button_Close_CreateStory")! as Button;
+            setupButtonVisuals(button_closeMenuCreateStory, "Back", btnFontWhite, btnFontFamily, btnSmallFontSize, false, blackButtonBackgroundUrl);
             button_closeMenuCreateStory.onPointerUpObservable.add(openMainMenu);
-
-            // Setup text input for create story menu
-            const inputTextContainer = gui.getControlByName("CreateStoryGrid")! as Grid;
-            const inputTextArea = new InputTextArea('Example InputTextArea', "Create a story");
-            inputTextArea.width = "80%";
-            inputTextArea.height = "100%";
-            inputTextArea.color = "white";
-            inputTextContainer.addControl(inputTextArea, 1, 0);
             
         });
 
