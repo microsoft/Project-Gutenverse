@@ -44,6 +44,7 @@
             ]
         },
         {
+            "music": "../../assets/audio/Cedric_Galke_Fachhochschule_Dortmund_Flowers.mp3",
             "environment": "../../assets/environment/castle_background.png",
             "characters": [
                 {

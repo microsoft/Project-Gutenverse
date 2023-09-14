@@ -110,13 +110,7 @@ export const babylonInit = async (): Promise<void> => {
     };
 
     // populate initially with main menu
-    const startScreen = new StartScreen({
-        chooseStoryCallback: () => {
-            startScreen.dispose();
-            const player = new StoryPlayer(storyContent, sceneArgs);
-            player.playScene();
-        }
-    });
+    const startScreen = new StartScreen();
     await startScreen.populate(sceneArgs);
 
     // JUST FOR TESTING. Not needed for anything else

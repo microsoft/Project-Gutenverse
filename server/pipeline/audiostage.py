@@ -6,6 +6,7 @@ import json
 import os
 from loguru import logger
 import time
+from gtts import gTTS
 
 class AudioStage(Stage):
 
@@ -18,7 +19,7 @@ class AudioStage(Stage):
     def __init__(self, _music_duration=5, _audio_duration=2):
         start = time.time()
         # Load the Music Gen model with the CPU if we are not using the GPU, otherwise let Music Gen determine how to load the model
-        self.musicgen_model = MusicGen.get_pretrained('facebook/musicgen-small', device="cpu" if not config.UseGpu else None)
+        self.musicgen_model = MusicGen.get_pretrained('facebook/musicgen-small', device="cpu" if not config.UseGpuAudioGen else None)
         end = time.time()
         logger.info(f"MusicGen Model took {end-start} seconds")
 
@@ -26,7 +27,7 @@ class AudioStage(Stage):
 
         start = time.time()
         # Load the Audio Gen model with the CPU if we are not using the GPU, otherwise let Audio Gen determine how to load the model
-        self.audiogen_model = AudioGen.get_pretrained('facebook/audiogen-medium', device="cpu" if not config.UseGpu else None)
+        self.audiogen_model = AudioGen.get_pretrained('facebook/audiogen-medium', device="cpu" if not config.UseGpuAudioGen else None)
         end = time.time()
         logger.info(f"AudioGen Model took {end-start} seconds")
 
@@ -36,47 +37,62 @@ class AudioStage(Stage):
         story_folder = os.path.join(config.server_root, config.stories_dir, context.id)
         music_filename = "music"
         audio_filename = "audio"
+        tts_filename = "tts"
 
         for subfolder in sorted(os.listdir(story_folder)):
             subfolder_path = os.path.join(story_folder, subfolder)
 
-            save_file_path = os.path.join(subfolder_path, '4_audio_stage.json')
+            save_file_path = os.path.join(subfolder_path, '6_audio_stage.json')
             if os.path.isfile(save_file_path):
                 logger.info(f"{self} step found to be already completed")
+                continue
 
-            # Check if the path is a directory and contains the required JSON file
-            if os.path.isdir(subfolder_path) and '1_analysis_stage.json' in os.listdir(subfolder_path):
-                json_path = os.path.join(subfolder_path, '1_analysis_stage.json')
+            # Check if the path is a directory and contains the required JSON files
+            if os.path.isdir(subfolder_path):
+                json_data = {}
+                json_data["audio"] = {}
 
-                # Read the JSON file
-                with open(json_path, 'r') as file:
-                    data = json.load(file)
-                    audio_data = data.get('audio', {})
-                    mood_music = audio_data.get('mood', {})
-                    sequence = audio_data.get('sequence', {})        
-                    sound_effects = list(sequence.values())
+                if '1_analysis_stage.json' in os.listdir(subfolder_path):
+                    json_path = os.path.join(subfolder_path, '1_analysis_stage.json')
 
-                    self.generate_music(mood_music, subfolder_path, music_filename)
-                    self.generate_audio(sound_effects, subfolder_path, audio_filename)
+                    # Read the JSON file
+                    with open(json_path, 'r') as file:
+                        data = json.load(file)
+                        audio_data = data.get('audio', {})
+                        mood_music = audio_data.get('mood', {})
+                        sequence = audio_data.get('sequence', {})        
+                        sound_effects = list(sequence.values())
 
-                    json_data = {
-                        "audio":
-                        {
-                            "mood": mood_music,
-                            "sequence": sequence,
-                            "music_file": f"{music_filename}.wav",
-                            "audio_files": {}
-                        }
-                    }
+                        self.generate_music(mood_music, subfolder_path, music_filename)
+                        self.generate_audio(sound_effects, subfolder_path, audio_filename)
 
-                    for idx in range(len(sound_effects)):
-                        json_data["audio"]["audio_files"][idx+1] = f"{audio_filename}_sequence_{idx+1}.wav"
+                        json_data["audio"]["mood"] = mood_music
+                        json_data["audio"]["sequence"] = sequence
+                        json_data["audio"]["music_file"] = f"{music_filename}.wav"
 
+                        json_data["audio"]["audio_files"] = {}
+                        for idx in range(len(sound_effects)):
+                            json_data["audio"]["audio_files"][idx+1] = f"{audio_filename}_sequence_{idx+1}.wav"
+
+                if 'scene.json' in os.listdir(subfolder_path):
+                    json_path = os.path.join(subfolder_path, 'scene.json')
+
+                    # Read the JSON file
+                    with open(json_path, 'r') as file:
+                        data = json.load(file)
+                        title = data.get('title', '')
+                        storycontent = data.get('content', '')
+                        storycontent = self.clean_white_space(storycontent)
+
+                        self.generate_tts(f"{title}\n{storycontent}", subfolder_path, tts_filename)
+                        json_data["audio"]["tts_file"] = f"{tts_filename}.mp3"
+                
+                if json_data:
                     with open(save_file_path, 'w') as output_file:
                         json.dump(json_data, output_file, indent=4)
 
         return context
-
+    
     def generate_music(self, music_prompt, path, filename):
         logger.info("MusicGen model about to generate...")
         start = time.time()
@@ -98,3 +114,15 @@ class AudioStage(Stage):
             filepath = os.path.join(path, f"{filename}_sequence_{idx+1}")
             audio_write(filepath, one_wav.cpu(), self.audiogen_model.sample_rate, strategy="loudness", loudness_compressor=True)
 
+    def generate_tts(self, tts_prompt, path, filename):
+        filepath = os.path.join(path, f"{filename}.mp3")
+        logger.info("TTS about to generate...")
+
+        start = time.time()
+        tts = gTTS(tts_prompt, lang='en', tld='co.uk')
+        tts.save(filepath)
+        end = time.time()
+        logger.info(f"TTS Generation took {end-start} seconds")
+    
+    def clean_white_space(self, str):
+        return str.replace("\n", " ")

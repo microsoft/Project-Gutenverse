@@ -20,7 +20,8 @@ class Config:
     stories_dir: Path
     OpenAIApiKey: str
     MongoDBConnectionString: str
-    UseGpu: bool
+    UseGpuImageGen: bool
+    UseGpuAudioGen: bool
     
 def get_secret(name):
     return os.getenv(name)
