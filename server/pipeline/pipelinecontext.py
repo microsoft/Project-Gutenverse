@@ -1,6 +1,7 @@
 import uuid
 from dataclasses import dataclass, field
 from utilities import story_title_to_hash
+from typing import List
 
 @dataclass
 class Scene:
@@ -12,7 +13,8 @@ class Scene:
 
 @dataclass
 class SegmentationAnalysis:
-    scenes: list[Scene] = field(default_factory=list)
+    # scenes: list[Scene] = field(default_factory=list)
+    scenes: List[Scene] = field(default_factory=list)
     last_processed_index: int = 0
 
 @dataclass

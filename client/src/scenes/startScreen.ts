@@ -8,26 +8,26 @@ import {Button } from "@babylonjs/gui/2D/controls/button";
 import { InputTextArea } from "@babylonjs/gui/2D/controls/inputTextArea"
 import { Grid } from "@babylonjs/gui/2D/controls/grid"
 import {StackPanel } from "@babylonjs/gui/2D/controls/stackPanel"
+import {ScrollViewer} from "@babylonjs/gui/2D/controls/scrollViewers/scrollViewer"
 
 import menuBackgroundUrl from "../../public/assets/menu_background.jpg";
 import { StoryPlayer } from "./storyPlayer";
-
-export interface StartScreenArgs {
-    chooseStoryCallback: Callback;
-}
+import { GetClass, RegisterClass } from "@babylonjs/core";
 
 export class StartScreen implements SceneClass {
 
     public gui?: AdvancedDynamicTexture;
-    constructor(public startScreenArgs: StartScreenArgs) {}
     populate = async (
         sceneArgs: SceneArgs
     ): Promise<Scene> => {
         const scene = sceneArgs.scene;
-        const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
+        // const advancedTexture = AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
+        console.log('grid get', GetClass("BABYLON.GUI.Grid"));
+        RegisterClass("BABYLON.GUI.Grid", Grid);
+        RegisterClass("BABYLON.GUI.ScrollViewer", ScrollViewer);
 
         await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#40").then((gui) => {
-            this.gui = advancedTexture;
+            this.gui = gui;
 
             // Add Background Image
             const backgroundImage = new Image("backgroundImage", menuBackgroundUrl);
@@ -135,6 +135,7 @@ export class StartScreen implements SceneClass {
                                     rootGrid.isVisible = false;
                                     backgroundImage.isVisible = false;
 
+                                    gui.dispose();
                                     const player: StoryPlayer = new StoryPlayer(scenes, sceneArgs);
                                     player.playScene();
                                 });
