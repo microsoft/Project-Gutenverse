@@ -72,6 +72,7 @@ tokenizers==0.13.3
 torch==2.0.1+cu118
 tqdm==4.66.1
 transformers==4.33.1
+transparent-background==1.2.4
 typing_extensions==4.7.1
 tzdata==2023.3
 urllib3==2.0.4
@@ -80,3 +81,5 @@ win32-setctime==1.1.0
 wsproto==1.2.0
 yarl==1.9.2
 zipp==3.16.2
+flask_cors==3.0.10
+audiocraft==1.0.0

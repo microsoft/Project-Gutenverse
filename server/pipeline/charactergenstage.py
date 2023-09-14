@@ -1,18 +1,15 @@
 from loguru import logger
 from stage import Stage
 from config import config
-from rembg import remove
+from transparent_background import Remover
 import json
 import os
 from llm import *
 
 class CharacterGenStage(Stage):
-    def __init__(self) -> None:
-        self.imageGenLLM = DalleLLM()
-        super().__init__()
-
-    def __init__(self, imageGenLLM) -> None:
+    def __init__(self, imageGenLLM = DalleLLM()) -> None:
         self.imageGenLLM = imageGenLLM
+        self.remover = Remover()
         super().__init__()
 
     def __repr__(self) -> str:
@@ -75,6 +72,6 @@ class CharacterGenStage(Stage):
         negative_prompt = "bad anatomy, low quality"
         image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt)
         imagePath = os.path.join(subfolder_path, filename)
-        image_bg_removed = remove(image)
+        image_bg_removed = Image.fromarray(self.remover.process(image))
         image_bg_removed.save(imagePath)
         return filename
