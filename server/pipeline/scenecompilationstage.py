@@ -33,7 +33,8 @@ class SceneCompilationStage(Stage):
             segmentation_filepath = os.path.join(story_folder, subfolder, "scene.json")
             charactergen_filepath = os.path.join(story_folder, subfolder, "2_charactergen_stage.json")
             composition_filepath = os.path.join(story_folder, subfolder, "4_composition_stage.json")
-            
+            audiostage_filepath = os.path.join(story_folder, subfolder, "6_audio_stage.json")
+
             skybox_filepath = f"/stories/{str(context.id)}/{subfolder}/assets/skybox_360.png"
         
             if not os.path.isfile(charactergen_filepath):
@@ -47,9 +48,13 @@ class SceneCompilationStage(Stage):
             segmentation_data = self.load_json_data(segmentation_filepath)
             charactergen_data = self.load_json_data(charactergen_filepath, "characters")
             composition_data = self.load_json_data(composition_filepath, "characters")
+            audiostage_data = self.load_json_data(audiostage_filepath)
             # add image from character gen object
             for character_name, character_info in charactergen_data.items():
                 composition_data[character_name]['imageUrl'] = f"/stories/{str(context.id)}/{subfolder}/assets/{character_info.get('image')}"
+            # add in character audio assets
+            for character_name, sound_effect_path in audiostage_data["audio"]["character_sound_effects"].items():
+                composition_data[character_name]["soundEffect"] = f"/stories/{str(context.id)}/{subfolder}/assets/{sound_effect_path}"
 
             # set scene story text under 'narrator' character for now
             # since it is not broken down by speaker / not every story will have dialog
@@ -59,13 +64,11 @@ class SceneCompilationStage(Stage):
             
             scene_compilation_data["environment"] = skybox_filepath
 
-            # Add in audio assets
-            audiostage_filepath = os.path.join(story_folder, subfolder, "6_audio_stage.json")
-            audiostage_data = self.load_json_data(audiostage_filepath)
+            # Add in story audio assets
             music_file_name = audiostage_data["audio"]["music_file"]
             text_tospeech_filename = audiostage_data["audio"]["tts_file"]
             scene_compilation_data["music"] = f"/stories/{str(context.id)}/{subfolder}/assets/{music_file_name}"
-            scene_compilation_data["tts"] = f"/stories/{str(context.id)}/{subfolder}/assets/{text_tospeech_filename}"
+            scene_compilation_data["speech"][0]["tts"] = f"/stories/{str(context.id)}/{subfolder}/assets/{text_tospeech_filename}"
             scene_compilation_data["audio"] = self.transform_audio_data(audiostage_data, context.id, subfolder)["audio"]
 
             scene_json = scene_compilation_data
@@ -123,6 +126,8 @@ class SceneCompilationStage(Stage):
                 transformed_character["distanceFromGround"] = character_info["distance_from_the_floor"]
             if "imageUrl" in character_info:
                 transformed_character["imageUrl"] = character_info["imageUrl"]
+            if "soundEffect" in character_info:
+                transformed_character["soundEffect"] = character_info["soundEffect"]
 
             transformed_characters.append(transformed_character)
 
