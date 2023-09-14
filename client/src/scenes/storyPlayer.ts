@@ -33,6 +33,7 @@ export class StoryPlayer {
             console.log('loading text to speech from url', "http://localhost:5000" + this.storyContent.scenes[this.currentSceneIndex].tts);
             this.currSceneSound = new Sound("backgroundMusic", "http://localhost:5000" + this.storyContent.scenes[this.currentSceneIndex].tts, this.sceneArgs.scene, () => {
                 this.currSceneSound!.play();
+                this.currSceneSound!.loop = false;
                 this.player.updateSound(this.currSceneSound!);
             }, {loop: true});
         }
@@ -49,7 +50,7 @@ export class StoryPlayer {
         if (this.currSceneBackgroundMusic) {
             this.currSceneBackgroundMusic.dispose();
         }
-        
+
         if (this.currSceneSound) {
             this.currSceneSound.dispose();
         }
