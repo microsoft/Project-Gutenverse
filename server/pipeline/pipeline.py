@@ -14,7 +14,7 @@ from llm import *
 
 class Pipeline:
     def __init__(self):
-        if config.UseGpu:
+        if config.UseGpuImageGen:
             self.imageGenLLM = KandinskyLLM()
         else:
             self.imageGenLLM = DalleLLM()

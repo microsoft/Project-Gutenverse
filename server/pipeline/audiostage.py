@@ -18,7 +18,7 @@ class AudioStage(Stage):
     def __init__(self, _music_duration=5, _audio_duration=2):
         start = time.time()
         # Load the Music Gen model with the CPU if we are not using the GPU, otherwise let Music Gen determine how to load the model
-        self.musicgen_model = MusicGen.get_pretrained('facebook/musicgen-small', device="cpu")
+        self.musicgen_model = MusicGen.get_pretrained('facebook/musicgen-small', device="cpu" if not config.UseGpuAudioGen else None)
         end = time.time()
         logger.info(f"MusicGen Model took {end-start} seconds")
 
@@ -26,7 +26,7 @@ class AudioStage(Stage):
 
         start = time.time()
         # Load the Audio Gen model with the CPU if we are not using the GPU, otherwise let Audio Gen determine how to load the model
-        self.audiogen_model = AudioGen.get_pretrained('facebook/audiogen-medium', device="cpu")
+        self.audiogen_model = AudioGen.get_pretrained('facebook/audiogen-medium', device="cpu" if not config.UseGpuAudioGen else None)
         end = time.time()
         logger.info(f"AudioGen Model took {end-start} seconds")
 
@@ -43,6 +43,7 @@ class AudioStage(Stage):
             save_file_path = os.path.join(subfolder_path, '4_audio_stage.json')
             if os.path.isfile(save_file_path):
                 logger.info(f"{self} step found to be already completed")
+                continue
 
             # Check if the path is a directory and contains the required JSON file
             if os.path.isdir(subfolder_path) and '1_analysis_stage.json' in os.listdir(subfolder_path):

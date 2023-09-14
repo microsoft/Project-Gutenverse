@@ -88,8 +88,8 @@ class SkyboxGenStage(Stage):
         new_image.paste(flipped_image, (original_width, 0))
         
         # Add padding to the top and bottom
-        top_padding = int(original_height * 0.2)
-        bottom_padding = int(original_height * 0.6)
+        top_padding = int(original_height * 1.5)
+        bottom_padding = int(original_height * 1.2)
         padded_height = original_height + top_padding + bottom_padding
         final_image = Image.new("RGB", (new_width, padded_height), (0, 0, 0))
         final_image.paste(new_image, (0, top_padding))
