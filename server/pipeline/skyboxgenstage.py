@@ -85,7 +85,7 @@ class SkyboxGenStage(Stage):
         image = Image.open(imagePath)
         original_width, original_height = image.size
         
-        # flip twice if not using GpuImageGen because image width is 512
+        # flip twice if not using GpuImageGen because image width is only 512
         times_to_flip = 1
         if not config.UseGpuImageGen:
             times_to_flip = 2
@@ -97,6 +97,11 @@ class SkyboxGenStage(Stage):
             new_image = Image.new("RGB", (new_width, original_height))
             new_image.paste(image, (0, 0))
             new_image.paste(flipped_image, (original_width, 0))
+
+            # update width and image
+            if times_to_flip > 1:
+                image = new_image
+                original_width = new_width
         
         # Add padding to the top and bottom
         top_padding = int(original_height * 0.2)
