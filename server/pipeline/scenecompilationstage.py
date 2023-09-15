@@ -53,8 +53,9 @@ class SceneCompilationStage(Stage):
             for character_name, character_info in charactergen_data.items():
                 composition_data[character_name]['imageUrl'] = f"/stories/{str(context.id)}/{subfolder}/assets/{character_info.get('image')}"
             # add in character audio assets
-            for character_name, sound_effect_path in audiostage_data["audio"]["character_sound_effects"].items():
-                composition_data[character_name]["soundEffect"] = f"/stories/{str(context.id)}/{subfolder}/assets/{sound_effect_path}"
+            for character_name, sound_effect_info in audiostage_data["audio"]["character_sound_effects"].items():
+                composition_data[character_name]["soundEffect"] = f"/stories/{str(context.id)}/{subfolder}/assets/{sound_effect_info.get('path')}"
+                composition_data[character_name]["soundEffectDescription"] = sound_effect_info.get('description')
 
             # set scene story text under 'narrator' character for now
             # since it is not broken down by speaker / not every story will have dialog
@@ -88,17 +89,9 @@ class SceneCompilationStage(Stage):
         output_data = {
             "audio": {
                 "mood": input_data["audio"]["mood"],
-                "music_file": input_data["audio"]["music_file"],
-                "audio_files": {}
+                "music_file": input_data["audio"]["music_file"]
             }
         }
-
-        for key, value in input_data["audio"]["audio_files"].items():
-            description = input_data["audio"]["sequence"][key]
-            output_data["audio"]["audio_files"][key] = {
-                "name": f"/stories/{str(id)}/{subfolder}/assets/{value}",
-                "description": description
-            }
 
         return output_data
     
@@ -128,6 +121,8 @@ class SceneCompilationStage(Stage):
                 transformed_character["imageUrl"] = character_info["imageUrl"]
             if "soundEffect" in character_info:
                 transformed_character["soundEffect"] = character_info["soundEffect"]
+            if "soundEffectDescription" in character_info:
+                transformed_character["soundEffectDescription"] = character_info["soundEffectDescription"]
 
             transformed_characters.append(transformed_character)
 

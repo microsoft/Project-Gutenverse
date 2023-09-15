@@ -33,7 +33,6 @@ class AudioStage(Stage):
     def _process(self, context):
         story_folder = os.path.join(config.server_root, config.stories_dir, context.id)
         music_filename = "music"
-        audio_filename = "audio"
         tts_filename = "tts"
 
         for subfolder in sorted(os.listdir(story_folder)):
@@ -56,8 +55,6 @@ class AudioStage(Stage):
                         data = json.load(file)
                         audio_data = data.get('audio', {})
                         mood_music = audio_data.get('mood', {})
-                        sequence = audio_data.get('sequence', {})
-                        story_sound_effects = list(sequence.values())
 
                         character_data = data.get('characters', {})
                         characters = list(character_data.keys())
@@ -70,21 +67,17 @@ class AudioStage(Stage):
                         self.musicgen_model.dispose() # as a workaround for out of memory issues, dispose resources after generating music. todo: create once to be re-used between subfolders
 
                         self.audiogen_model.instantiate()
-                        self.generate_story_audio(story_sound_effects, subfolder_path, audio_filename)
                         self.generate_characters_audio(character_sound_effects, subfolder_path, characters)
                         self.audiogen_model.dispose() # as a workaround for out of memory issues, dispose resources after generating audio. todo: create once after musicgen_model has be disposed.
 
                         json_data["audio"]["mood"] = mood_music
-                        json_data["audio"]["sequence"] = sequence
                         json_data["audio"]["music_file"] = f"{music_filename}.wav"
 
-                        json_data["audio"]["audio_files"] = {}
-                        for idx in range(len(story_sound_effects)):
-                            json_data["audio"]["audio_files"][idx+1] = f"{audio_filename}_sequence_{idx+1}.wav"
-
                         json_data["audio"]["character_sound_effects"] = {}
-                        for character in characters:
-                            json_data["audio"]["character_sound_effects"][character] = f"{character}.wav"
+                        for idx, character in enumerate(characters):
+                            json_data["audio"]["character_sound_effects"][character] = {}
+                            json_data["audio"]["character_sound_effects"][character]["description"] = character_sound_effects[idx]
+                            json_data["audio"]["character_sound_effects"][character]["path"] = f"{character}.wav"
 
                 if 'scene.json' in os.listdir(subfolder_path):
                     json_path = os.path.join(subfolder_path, 'scene.json')
@@ -114,15 +107,6 @@ class AudioStage(Stage):
         filepath = os.path.join(path, filename)
         audio_write(filepath, wav[0].cpu(), sample_rate, strategy="loudness", loudness_compressor=True)
 
-    def generate_story_audio(self, story_audio_prompt, path, filename):
-        logger.info("AudioGen model about to generate for story...")
-        wav = self.audiogen_model.generate(story_audio_prompt)
-        sample_rate = self.audiogen_model.sample_rate
-        
-        for idx, one_wav in enumerate(wav):
-            filepath = os.path.join(path, f"{filename}_sequence_{idx+1}")
-            audio_write(filepath, one_wav.cpu(), sample_rate, strategy="loudness", loudness_compressor=True)
-
     def generate_characters_audio(self, characters_audio_prompt, path, filenames):
         logger.info("AudioGen model about to generate for characters...")
         wav = self.audiogen_model.generate(characters_audio_prompt)
@@ -136,11 +120,8 @@ class AudioStage(Stage):
         filepath = os.path.join(path, f"{filename}.mp3")
         logger.info("TTS about to generate...")
 
-        start = time.time()
         tts = gTTS(tts_prompt, lang='en', tld='co.uk')
         tts.save(filepath)
-        end = time.time()
-        logger.info(f"TTS Generation took {end-start} seconds")
     
     def clean_white_space(self, str):
         return str.replace("\n", " ")
