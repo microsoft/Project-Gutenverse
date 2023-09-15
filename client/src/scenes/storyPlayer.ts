@@ -29,9 +29,9 @@ export class StoryPlayer {
             }, {loop: true});
         }
 
-        if (this.storyContent.scenes[this.currentSceneIndex].tts) {
-            console.log('loading text to speech from url', "http://localhost:5000" + this.storyContent.scenes[this.currentSceneIndex].tts);
-            this.currSceneSound = new Sound("backgroundMusic", "http://localhost:5000" + this.storyContent.scenes[this.currentSceneIndex].tts, this.sceneArgs.scene, () => {
+        if (this.storyContent.scenes[this.currentSceneIndex]["speech"][0].tts) {
+            console.log('loading text to speech from url', "http://localhost:5000" + this.storyContent.scenes[this.currentSceneIndex]["speech"][0].tts);
+            this.currSceneSound = new Sound("backgroundMusic", "http://localhost:5000" + this.storyContent.scenes[this.currentSceneIndex]["speech"][0].tts, this.sceneArgs.scene, () => {
                 this.currSceneSound!.play();
                 this.currSceneSound!.loop = false;
                 this.player.updateSound(this.currSceneSound!);
