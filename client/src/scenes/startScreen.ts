@@ -194,7 +194,23 @@ export class StartScreen implements SceneClass {
             button_closeMenuChooseStory.onPointerUpObservable.add(openMainMenu);
 
             const stackButtonContainer = gui.getControlByName("StackPanel_StoryButtons")! as StackPanel;
-            
+            function fixCharacterContinuity(scenesJson: any): any {
+                const characterImageUrlMap: { [key: string]: string } = {};
+              
+                scenesJson.scenes.forEach((scene: any) => {
+                  scene.characters.forEach((character: any) => {
+                    if (character.name && character.imageUrl) {
+                      if (!characterImageUrlMap[character.name]) {
+                        characterImageUrlMap[character.name] = character.imageUrl;
+                      } else {
+                        character.imageUrl = characterImageUrlMap[character.name];
+                      }
+                    }
+                  });
+                });
+              
+                return scenesJson;
+              }
             const storyRequest = fetch("http://127.0.0.1:5000/stories/disk");
             storyRequest.then(response => {
                 if (!response.ok) {
@@ -229,6 +245,7 @@ export class StartScreen implements SceneClass {
                                     backgroundImage.isVisible = false;
 
                                     gui.dispose();
+                                    fixCharacterContinuity(scenes);
                                     const player: StoryPlayer = new StoryPlayer(scenes, sceneArgs);
                                     player.playScene();
                                 });

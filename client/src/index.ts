@@ -61,7 +61,7 @@ export const babylonInit = async (): Promise<void> => {
     sphere.scaling = new Vector3(-1, -1, -1);
     material.backFaceCulling = false;
     sphere.material = material;
-    sphere.position.y += 30;
+    sphere.position.y += 40;
 
     const dirLight = new DirectionalLight(
         "dirLight",
