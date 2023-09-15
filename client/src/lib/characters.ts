@@ -59,7 +59,8 @@ export class Character {
                 this.scene
             );
             const hightlight = new HighlightLayer("hl" + this.data.name, this.scene);
-            const sound = new Sound("plim", this.data.soundEffect);
+            const sound = new Sound("plim", "http://localhost:5000" + this.data.soundEffect);
+            sound.setVolume(.5);
             sprite1.actionManager = new ActionManager(this.scene);
             sprite1.actionManager.registerAction(
                 new PlaySoundAction(
