@@ -43,7 +43,7 @@ class SkyboxGenStage(Stage):
                     data = json.load(file)
                     setting = data.get('setting', {})
                     skybox_gen_data = {"skybox": {}}
-                    visual_style = data.get('visual_style', '')
+                    visual_style = data.get('visualstyle', '')
                     skybox_prompt = ", ".join([setting["location"],
                                              setting["timeofday"],
                                              setting["weather"],

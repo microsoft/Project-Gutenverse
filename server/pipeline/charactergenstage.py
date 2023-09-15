@@ -38,7 +38,7 @@ class CharacterGenStage(Stage):
                 with open(json_path, 'r') as file:
                     data = json.load(file)
                     characters = data.get('characters', {})
-                    visual_style = data.get('visual_style', '')
+                    visual_style = data.get('visualstyle', '')
                     character_gen_data = {"characters": {}}
                     
                     # For each character in the JSON
