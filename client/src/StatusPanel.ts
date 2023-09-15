@@ -2,6 +2,28 @@ export class StatusPanel {
     private guid: string;
     private panel: HTMLElement | null;
     private intervalId: number | undefined;
+    private createCloseButton(): HTMLElement {
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'X';
+        closeButton.style.position = 'absolute';
+        closeButton.style.top = '-1px'; 
+        closeButton.style.right = '-1px';
+        closeButton.style.background = 'none';
+        closeButton.style.border = 'none';
+        closeButton.style.cursor = 'pointer';
+        closeButton.style.fontSize = '12px';
+        closeButton.addEventListener('click', () => {
+            this.dispose();
+        });
+		return closeButton;
+	}
+        
+    private createStatusContainer(): HTMLElement {
+        const statusDiv = document.createElement('div');
+        statusDiv.id = 'statusContainer';
+        return statusDiv;
+    }
+
     
     constructor(guid: string) {
         this.guid = guid;
@@ -21,6 +43,8 @@ export class StatusPanel {
         panel.style.padding = '10px';
         document.body.appendChild(panel);
         this.panel = panel;
+        panel.appendChild(this.createCloseButton());
+        panel.appendChild(this.createStatusContainer());
     }
     
     private async updateStatus(): Promise<void> {
@@ -34,7 +58,8 @@ export class StatusPanel {
             }
             
             if (this.panel) {
-                this.panel.textContent = `Pipeline Status:  ${data["Current Scene and Stage"]}
+                const statusDiv = this.panel?.querySelector('#statusContainer');
+            if (statusDiv) statusDiv.textContent = `Pipeline Status:  ${data["Current Scene and Stage"]}
                 Number of Scenes: ${data["Number of Scenes"]}
                 Stages Left: ${data["Stages Left"].join(', ')}
                 `;
