@@ -47,6 +47,12 @@ class DB:
         for bad_story in bad_stories:
             DB.connection["Stories"].delete_one({"_id": bad_story["_id"]})
         
+    @staticmethod
+    def delete_stories():
+        bad_stories = [x for x in DB.get_all_stories()]
+        for bad_story in bad_stories:
+            DB.connection["Stories"].delete_one({"_id": bad_story["_id"]})
+        
 
     @staticmethod
     def get_all_stories():

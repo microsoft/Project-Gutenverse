@@ -9,6 +9,7 @@ from pipeline import PipelineContext
 from db import DB
 from loguru import logger
 from bson import ObjectId
+from collections import defaultdict
 
 app = Flask(__name__)
 CORS(app)
@@ -143,7 +144,59 @@ def remove_bad_documents():
     DB.delete_bad_stories()
     return "Success"
 
+@app.route("/AdminApi/PurgeDB")
+def remove_documents():
+    DB.delete_stories()
+    return "Success"
 
+@app.route("/stories/<story_id>/status")
+def get_story_status(story_id):
+    story_path = os.path.join(config.server_root, config.stories_dir, story_id)
+    
+    if not os.path.exists(story_path):
+        return {"error": "Story Not found"}, 404
+    
+    stage_names = {
+    'Analyizer': '1_analysis_stage.json',
+    'CharacterGeneration': '2_charactergen_stage.json',
+    'SkyboxGeneration': '3_skyboxgen_stage.json',
+    'AudioGeneration': '4_audio_stage.json',
+    'Composition': '4_composition_stage.json',
+    'SceneCompilation': '5_scenecompilation_stage.json'
+    }
+
+    status = defaultdict(list)
+    segmentation_done = False
+    for potentail_scene_dir in os.listdir(story_path):
+        potentail_scene_dir = os.path.join(story_path, potentail_scene_dir)
+        if not os.path.isdir(potentail_scene_dir):
+            continue
+        segmentation_done = True
+        for stage, file_name in stage_names.items():
+            if not status.get(os.path.basename(potentail_scene_dir)):
+                status[os.path.basename(potentail_scene_dir)] = []
+            if os.path.isfile(os.path.join(potentail_scene_dir, file_name)):
+               status[os.path.basename(potentail_scene_dir)].append(stage)
+    if not segmentation_done:
+        response = { "Number of Scenes": "Still being determined",
+                 "Stages Left": list(stage_names.keys()) + ["Segmentation"],
+                 "Current Scene and Stage": f'NA: Segementation',
+                 }
+        return response
+    base_line = status['0']
+    current_scene = '0'
+    for scene, stages_done in status.items():
+        if len(base_line) == len(stages_done):
+            current_scene = scene
+        elif len(base_line) > len(stages_done):
+            current_scene = scene
+            break
+    current_stage = list(set(base_line) - set(stages_done))        
+    response = { "Number of Scenes": len(status),
+                 "Stages Left": [x for x in stage_names if x not in status['0']],
+                 "Current Scene and Stage": f'{current_scene}: {current_stage}',
+                 }
+    return response
 
 # Create the stories directory if it doesn't exist
 if not os.path.exists(config.stories_dir):
