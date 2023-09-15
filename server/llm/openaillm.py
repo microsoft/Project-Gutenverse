@@ -1,7 +1,8 @@
 import os
-from config import config
 import openai
 import json
+
+from config import config
 
 class OpenAiLLM:
 

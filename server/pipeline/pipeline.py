@@ -2,11 +2,9 @@ import os
 import json
 from analyzerstage import AnalyzerStage
 from segmentationstage import SegmentationStage
-from charactergenstage import CharacterGenStage
-from skyboxgenstage import SkyboxGenStage
+from imagegenstage import ImageGenStage
 from compositionstage import CompositionStage
 from audiostage import AudioStage
-from skyboxgenstage import SkyboxGenStage
 from scenecompilationstage import SceneCompilationStage
 from stage import Stage
 from config import config
@@ -14,23 +12,16 @@ from llm import *
 
 class Pipeline:
     def __init__(self):
-        if config.UseGpuImageGen:
-            self.imageGenLLM = KandinskyLLM()
-        else:
-            self.imageGenLLM = DalleLLM()
-
         self.stages = [
             SegmentationStage(),
             AnalyzerStage(),
-            CharacterGenStage(self.imageGenLLM),
-            SkyboxGenStage(self.imageGenLLM),
+            ImageGenStage(),
             CompositionStage(),
             AudioStage(),
             SceneCompilationStage()
         ]
 
     def __del__(self):
-        del self.imageGenLLM
         del self.stages
 
     def _teardown_all_stage_checkpoints(self):
@@ -55,6 +46,9 @@ class Pipeline:
             }, f)
 
         for stage in self.stages:
+            stage.initialize()
             context = stage.process(context)
+            stage.dispose()
+
         # self._teardown_all_stage_checkpoints()
         return

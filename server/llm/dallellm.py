@@ -4,6 +4,7 @@ import openai
 import requests
 
 class DalleLLM:
+    
     def __init__(self) -> None:
         openai.api_key = config.OpenAIApiKey
 

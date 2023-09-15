@@ -7,22 +7,14 @@ import json
 import os
 from llm import *
 
-class SkyboxGenStage(Stage):
-    def __init__(self) -> None:
-        self.imageGenLLM = DalleLLM()
-        super().__init__()
-
-    def __init__(self, imageGenLLM) -> None:
-        self.imageGenLLM = imageGenLLM
-        super().__init__()
-
+class SkyboxGen:
     def __repr__(self) -> str:
         return 'SkyboxGenStage'
 
     def __str__(self) -> str:
         return self.__repr__()
 
-    def _process(self, context):
+    def process(self, context, image_gen_llm):
         story_folder = os.path.join(config.server_root, config.stories_dir, context.id)
 
         # For each subfolder in the story_folder
@@ -51,7 +43,7 @@ class SkyboxGenStage(Stage):
                                              "masterpiece",
                                              visual_style])
 
-                    flat_skybox_name = self.generate_image(subfolder_path, "skybox", skybox_prompt)
+                    flat_skybox_name = self.generate_image(subfolder_path, "skybox", skybox_prompt, image_gen_llm)
                     image_filepath = self.create_pseudo_360(subfolder_path, flat_skybox_name, os.path.join(subfolder_path, "skybox_360.png"))
                     skybox_gen_data = {
                         "setting_info": setting,
@@ -65,15 +57,15 @@ class SkyboxGenStage(Stage):
 
         return context
 
-    def generate_image(self, subfolder_path, skybox_name, appearance):
+    def generate_image(self, subfolder_path, skybox_name, appearance, image_gen_llm):
         filename = f"{skybox_name.replace(' ', '')}.png"
         prompt = appearance
         negative_prompt = "low quality"
 
         if (config.UseGpuImageGen):
-            image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt, width=1024, height=512)
+            image = image_gen_llm.generate(prompt=prompt, negative_prompt=negative_prompt, width=1024, height=512)
         else:
-            image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt, width=512, height=512)
+            image = image_gen_llm.generate(prompt=prompt, negative_prompt=negative_prompt, width=512, height=512)
 
         imagePath = os.path.join(subfolder_path, filename)
         image.save(imagePath)

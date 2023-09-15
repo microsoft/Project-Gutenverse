@@ -2,4 +2,4 @@ stories_dir: "stories"
 OpenAIApiKey: "EnvironmentVariables"
 MongoDBConnectionString: "EnvironmentVariables"
 UseGpuImageGen: true
-UseGpuAudioGen: false
+UseGpuAudioGen: true

@@ -1,24 +1,22 @@
-from loguru import logger
-from stage import Stage
-from config import config
-from transparent_background import Remover
 import json
 import os
+
+from loguru import logger
+from config import config
+from transparent_background import Remover
 from llm import *
 
-class CharacterGenStage(Stage):
-    def __init__(self, imageGenLLM = DalleLLM()) -> None:
-        self.imageGenLLM = imageGenLLM
-        self.remover = Remover()
-        super().__init__()
-
+class CharacterGen:
     def __repr__(self) -> str:
         return 'CharacterGenStage'
 
     def __str__(self) -> str:
         return self.__repr__()
 
-    def _process(self, context):
+    def __init__(self):
+        self.remover = Remover()
+
+    def process(self, context, image_gen_llm):
         story_folder = os.path.join(config.server_root, config.stories_dir, context.id)
 
         # For each subfolder in the story_folder
@@ -53,7 +51,7 @@ class CharacterGenStage(Stage):
                             appearance = summary = description
                         appearance += ', full body'
                         appearance += ', ' + visual_style
-                        image_filepath = self.generate_image(subfolder_path, character_name, appearance)
+                        image_filepath = self.generate_image(subfolder_path, character_name, appearance, image_gen_llm)
                         character_gen_data['characters'][character_name] = {
                             "summary": summary,
                             "appearance": appearance,
@@ -67,11 +65,11 @@ class CharacterGenStage(Stage):
 
         return context
 
-    def generate_image(self, subfolder_path, character_name, appearance):
+    def generate_image(self, subfolder_path, character_name, appearance, image_gen_llm):
         filename = f"character_{character_name.replace(' ', '')}.png"
         prompt = appearance
         negative_prompt = "bad anatomy, low quality, blurred, blurry edges, incomplete body"
-        image = self.imageGenLLM.generate(prompt=prompt, negative_prompt=negative_prompt)
+        image = image_gen_llm.generate(prompt=prompt, negative_prompt=negative_prompt)
         imagePath = os.path.join(subfolder_path, filename)
         image_bg_removed = Image.fromarray(self.remover.process(image))
         image_bg_removed.save(imagePath)
