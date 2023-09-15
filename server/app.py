@@ -149,6 +149,24 @@ def remove_documents():
     DB.delete_stories()
     return "Success"
 
+@app.route('/latest-story', methods=['GET'])
+def get_latest_folder():
+    try:
+        # List all the directories under 'c:/mystuff'
+        stories_fullpath = os.path.join(config.server_root, config.stories_dir)
+        dirs = [d for d in os.listdir(stories_fullpath) if os.path.isdir(os.path.join(stories_fullpath, d))]
+        
+        # If there are no directories, return a message
+        if not dirs:
+            return jsonify({"message": "No directories found"}), 404
+        
+        # Get the latest directory based on creation time
+        latest_dir = max(dirs, key=lambda d: os.path.getctime(os.path.join(stories_fullpath, d)))
+        
+        return jsonify({"latest_folder": latest_dir}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/stories/<story_id>/status")
 def get_story_status(story_id):
     story_path = os.path.join(config.server_root, config.stories_dir, story_id)

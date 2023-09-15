@@ -10,6 +10,7 @@ import { InputTextArea } from "@babylonjs/gui/2D/controls/inputTextArea"
 import { Grid } from "@babylonjs/gui/2D/controls/grid"
 import { StackPanel } from "@babylonjs/gui/2D/controls/stackPanel"
 import { ScrollViewer } from "@babylonjs/gui/2D/controls/scrollViewers/scrollViewer"
+import * as StatusPanel from "../StatusPanel";
 
 import menuBackgroundUrl from "../../public/assets/menu_background.jpg";
 import normalButtonBackgroundUrl from "../../public/assets/textures/old_paper_texture_01.png";
@@ -29,7 +30,11 @@ export class StartScreen implements SceneClass {
         console.log('grid get', GetClass("BABYLON.GUI.Grid"));
         RegisterClass("BABYLON.GUI.Grid", Grid);
         RegisterClass("BABYLON.GUI.ScrollViewer", ScrollViewer);
-
+        fetch("http://127.0.0.1:5000/latest-story").then(latestResp => {
+            latestResp.json().then(guidData => {
+                const panel: StatusPanel.StatusPanel = new StatusPanel.StatusPanel(guidData.latest_folder);
+            })
+        });
         await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#67").then((gui) => {
             this.gui = gui;
 
@@ -75,11 +80,10 @@ export class StartScreen implements SceneClass {
                     },
                     body: JSON.stringify(payload)
                 }).then(response => response.json())
-                .then(data => console.log(data))
+                .then(data => {
+
+                })
                 .catch(error => console.error('Error:', error));
-                
-                window.alert("Your story has been submitted for processing! It will appear in the list of stories in 10-20 minutes.");
-                // TODO: inform the user that their story has been submitted for processing!  It will appear in the list of stories in 10-20 minutes!
             });
 
             // === MAIN MENU ===
