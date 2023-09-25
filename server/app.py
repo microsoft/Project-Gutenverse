@@ -33,7 +33,7 @@ def serve_story_scene(story_id):
     scene_path = os.path.join(config.server_root, config.stories_dir, story_id, "scene_compilation.json")
     
     if not os.path.exists(scene_path):
-        return jsonify({"error": "Chapter not found."}), 404
+        return jsonify({"error": "Scene not found."}), 404
     
     with open(scene_path, 'r') as file:
         data = json.load(file)
@@ -70,6 +70,7 @@ def chargen_test():
 
 
 @app.route("/stories/disk", methods=["GET"])
+
 def get_stories_from_disk():
     stories_dir = os.path.join(config.server_root, config.stories_dir)
     if not os.path.exists(stories_dir):
@@ -83,12 +84,17 @@ def get_stories_from_disk():
         if os.path.exists(stories_file):
             with open(stories_file, "r") as file:
                 data = json.load(file)
+                # Adding creation timestamp to the data for sorting
+                creation_timestamp = os.path.getctime(stories_file)
                 stories_collection.append({
                     "Id": data["id"],
-                    "Title": data["title"]
+                    "Title": data["title"],
+                    "CreationTimestamp": creation_timestamp
                 })
-    return jsonify(stories_collection)
-
+    # Sorting the stories based on the creation date in descending order
+    sorted_stories = sorted(stories_collection, key=lambda x: x["CreationTimestamp"], reverse=True)
+    # Returning only the Id and Title fields
+    return jsonify([{"Id": story["Id"], "Title": story["Title"]} for story in sorted_stories])
 @app.route("/stories", methods=["GET"])
 def get_stories():
     return [x for x in DB.get_all_stories() if type(x['_id']) is not ObjectId ]

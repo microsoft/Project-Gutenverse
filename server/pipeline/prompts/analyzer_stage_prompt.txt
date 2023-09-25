@@ -1,5 +1,5 @@
 Hi! Could you parse some text and extract the following:
-- The protagonists / main characters and a description of their appearance for the purpose of generating images of the characters / a relevant sound effect that represents the character
+- The protagonists / main characters and a description of their appearance for the purpose of generating images of the characters / a relevant sound effect that represents the character.
 - A description of the setting for the purpose of generating a skybox image
 - A list of adjectives describing the mood for background music / suggestion of appropriate ambient audio sound effects
 - A visual style to use for any art related to the story

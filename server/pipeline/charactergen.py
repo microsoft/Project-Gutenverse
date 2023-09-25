@@ -36,7 +36,9 @@ class CharacterGen:
                 with open(json_path, 'r') as file:
                     data = json.load(file)
                     characters = data.get('characters', {})
-                    visual_style = data.get('visualstyle', '')
+                    if not 'first_visual_style' in locals():
+                        first_visual_style = data.get('visualstyle', '')
+                    visual_style = first_visual_style
                     character_gen_data = {"characters": {}}
                     
                     # For each character in the JSON
@@ -49,7 +51,7 @@ class CharacterGen:
                             summary = description.get('summary', '')
                         else:
                             appearance = summary = description
-                        appearance += ', full body'
+                        appearance += ', full body, head to toe, full frame'
                         appearance += ', ' + visual_style
                         image_filepath = self.generate_image(subfolder_path, character_name, appearance, image_gen_llm)
                         character_gen_data['characters'][character_name] = {
@@ -68,7 +70,7 @@ class CharacterGen:
     def generate_image(self, subfolder_path, character_name, appearance, image_gen_llm):
         filename = f"character_{character_name.replace(' ', '')}.png"
         prompt = appearance
-        negative_prompt = "bad anatomy, low quality, blurred, blurry edges, incomplete body"
+        negative_prompt = "bad anatomy, low quality, blurred, blurry edges, cutoff"
         image = image_gen_llm.generate(prompt=prompt, negative_prompt=negative_prompt)
         imagePath = os.path.join(subfolder_path, filename)
         image_bg_removed = Image.fromarray(self.remover.process(image))

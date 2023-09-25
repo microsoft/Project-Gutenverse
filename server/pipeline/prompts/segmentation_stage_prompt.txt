@@ -1,5 +1,5 @@
 Hi!  Could you parse some text and identify the following:
-- The start and end of each distinct scene
+- The start and end of each distinct scene.  A scene has a clear beginning and end, usually marked by a change of location, time, or perspective
 - The name of the scene (scene.name) 
 - The body of each scene (scene.body)
 - The starting character index of the scene (scene.start_index)
