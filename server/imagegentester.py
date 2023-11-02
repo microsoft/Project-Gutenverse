@@ -2,6 +2,7 @@ from llm import *
 from transparent_background import Remover
 
 pipeline = KandinskyLLM()
+pipeline.instantiate()
 remover = Remover()
 while (True):
     prompt = input("Enter a prompt: ")
