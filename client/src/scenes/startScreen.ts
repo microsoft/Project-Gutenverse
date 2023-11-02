@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { Scene } from "@babylonjs/core/scene";
 import { Callback, SceneArgs, SceneClass } from "../createScene";
 import { AdvancedDynamicTexture } from "@babylonjs/gui/2D/advancedDynamicTexture";

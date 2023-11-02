@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 // Images
 declare module '*.jpg';
 declare module '*.png';

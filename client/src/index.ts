@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { Engine } from "@babylonjs/core/Engines/engine";
 import "@babylonjs/core/Engines/WebGPU/Extensions/engine.uniformBuffer";
 import {

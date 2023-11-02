@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import {Nullable, Scene, Sound} from "@babylonjs/core";
 import {AdvancedDynamicTexture, Control, TextBlock, ImageBasedSlider} from "@babylonjs/gui";
 import { Callback } from "../createScene";

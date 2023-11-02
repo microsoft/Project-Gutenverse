@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { Scene, Sound, Texture } from "@babylonjs/core";
 import { Character, CharacterData } from "../lib/characters";
 import { Player, TextFormat } from "../lib/player";

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 import os
 import json
 from flask import Flask, request, jsonify, send_from_directory

@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from datetime import datetime
 from bson import ObjectId
 from pymongo import MongoClient

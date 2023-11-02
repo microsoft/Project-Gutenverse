@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as Ammo from "ammo.js";
 
 export let ammoModule: any;

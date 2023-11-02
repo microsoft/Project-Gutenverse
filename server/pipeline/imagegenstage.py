@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 from stage import Stage
 from config import config
 from charactergen import CharacterGen

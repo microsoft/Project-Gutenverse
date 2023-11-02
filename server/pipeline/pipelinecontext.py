@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 import uuid
 from dataclasses import dataclass, field
 from utilities import story_title_to_hash

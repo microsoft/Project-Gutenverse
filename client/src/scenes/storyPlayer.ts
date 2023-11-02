@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { Sound } from "@babylonjs/core";
 import { SceneArgs } from "../createScene";
 import { Player } from "../lib/player";

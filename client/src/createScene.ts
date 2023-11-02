@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { Mesh, ShadowGenerator } from "@babylonjs/core";
 import type { Scene } from "@babylonjs/core/scene";
 

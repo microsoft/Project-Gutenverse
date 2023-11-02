@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+
 import sys, os
 from config import config
 rel_path = os.path.join(os.path.dirname(__file__), ".")
