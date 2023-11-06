@@ -1,7 +1,7 @@
 {
-  "name": "babylonjs-typescript-webpack-template",
+  "name": "gutenverse-client",
   "version": "0.0.1",
-  "description": "A simple scene using Babylon.js, typescript and webpack. What could go wrong?",
+  "description": "A client side UI/Player for creating and experiencing generated stories",
   "main": "index.ts",
   "dependencies": {
     "@babylonjs/core": "^6.0.0",
@@ -46,23 +46,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RaananW/babylonjs-webpack-es6.git"
+    "url": "git+https://github.com/project-gutenverse"
   },
   "keywords": [
     "Babylon.js",
-    "webpack",
-    "getting started",
-    "typescript",
-    "es6"
+    "Generative AI",
+    "ChatGPT",
+    "AudioCraft",
+    "LLMs",
+    "Storytelling"
   ],
-  "author": {
-    "name": "Raanan Weber",
-    "email": "info@raananweber.com",
-    "url": "http://blog.raananweber.com/"
-  },
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/RaananW/babylonjs-webpack-es6/issues"
-  },
-  "homepage": "https://github.com/RaananW/babylonjs-webpack-es6"
+  "license": "MIT"
 }
