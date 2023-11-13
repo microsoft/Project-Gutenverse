@@ -1,4 +1,5 @@
 # Introduction 
+Project Gutenverse is a system that takes plaintext stories as input and analyzes them to identify distinct scenes and produce metadata about each scene.   The analysis metadata is then used as inputs for the generative AI pipeline to produce a 3D world for a virtual storybook.
 
 # Getting Started
  - Install VSCode or your preferred Python/Javascript editor
