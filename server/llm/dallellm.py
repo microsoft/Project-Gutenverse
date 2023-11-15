@@ -13,12 +13,14 @@ class DalleLLM:
     def __init__(self) -> None:
         openai.api_key = config.OpenAIApiKey
 
-    def generate(self, prompt, negative_prompt = "", height = 512, width = 512):
+    def generate(self, prompt, negative_prompt = "", height = 1024, width = 1024):
         client = OpenAI(api_key=config.OpenAIApiKey)
+        size = f"{width}x{height}"
+
         response = client.images.generate(
             model="dall-e-3",
             prompt=prompt,
-            size="1024x1024",
+            size=size,
             quality="standard",
             n=1,
         )

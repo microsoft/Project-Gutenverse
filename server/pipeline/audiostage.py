@@ -13,6 +13,7 @@ from loguru import logger
 from gtts import gTTS
 from llm.fbmusicgen import FbMusicGen
 from llm.fbaudiogen import FbAudioGen
+from openai import OpenAI
 
 class AudioStage(Stage):
 
@@ -91,7 +92,7 @@ class AudioStage(Stage):
                         storycontent = data.get('content', '')
                         storycontent = self.clean_white_space(storycontent)
 
-                        self.generate_tts(f"{title}\n{storycontent}", subfolder_path, tts_filename)
+                        self.generate_openai_tts(f"{title}\n{storycontent}", subfolder_path, tts_filename)
                         json_data["audio"]["tts_file"] = f"{tts_filename}.mp3"
                 
                 if json_data:
@@ -125,6 +126,18 @@ class AudioStage(Stage):
 
         tts = gTTS(tts_prompt, lang='en', tld='co.uk')
         tts.save(filepath)
+
+    def generate_openai_tts(self, tts_prompt, path, filename):
+        client = OpenAI(api_key=config.OpenAIApiKey)
+        logger.info("TTS about to generate...")
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="onyx",
+            input=tts_prompt,
+        )
+
+        filepath = os.path.join(path, f"{filename}.mp3")
+        response.stream_to_file(filepath)
     
     def clean_white_space(self, str):
         return str.replace("\n", " ")
