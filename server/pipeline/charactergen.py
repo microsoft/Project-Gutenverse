@@ -54,7 +54,7 @@ class CharacterGen:
                             summary = description.get('summary', '')
                         else:
                             appearance = summary = description
-                        appearance += ', full body, head to toe, full frame'
+                        appearance += ', full body, head to toe, full frame, storybook style, high detail, high quality, masterpiece, masterpiece, masterpiece, masterpiece'
                         appearance += ', ' + visual_style
                         image_filepath = self.generate_image(subfolder_path, character_name, appearance, image_gen_llm)
                         character_gen_data['characters'][character_name] = {

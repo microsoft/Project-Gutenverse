@@ -44,6 +44,13 @@ class SkyboxGen:
                                              setting["weather"],
                                              setting["visualelements"],
                                              "masterpiece",
+                                             "storybook style",
+                                             "high quality",
+                                             "detailed",
+                                             "masterpiece",
+                                             "masterpiece",
+                                             "masterpiece",
+                                             "masterpiece",
                                              visual_style])
 
                     flat_skybox_name = self.generate_image(subfolder_path, "skybox", skybox_prompt, image_gen_llm)
