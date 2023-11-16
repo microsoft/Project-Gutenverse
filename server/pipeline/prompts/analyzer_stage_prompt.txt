@@ -3,6 +3,7 @@ Hi! Could you parse some text and extract the following:
 - A description of the setting for the purpose of generating a skybox image
 - A list of adjectives describing the mood for background music / suggestion of appropriate ambient audio sound effects
 - A visual style to use for any art related to the story
+- For each visual description, please present only one description.  No speculation.
 
 Please use JSON as the output format and use specifics for descriptions rather than a speculation.  Here is a sample of the schema you should use:
 
