@@ -44,6 +44,13 @@ class SkyboxGen:
                                              setting["weather"],
                                              setting["visualelements"],
                                              "masterpiece",
+                                             "storybook style",
+                                             "high quality",
+                                             "detailed",
+                                             "masterpiece",
+                                             "masterpiece",
+                                             "masterpiece",
+                                             "masterpiece",
                                              visual_style])
 
                     flat_skybox_name = self.generate_image(subfolder_path, "skybox", skybox_prompt, image_gen_llm)
@@ -68,7 +75,7 @@ class SkyboxGen:
         if (config.UseGpuImageGen):
             image = image_gen_llm.generate(prompt=prompt, negative_prompt=negative_prompt, width=1024, height=512)
         else:
-            image = image_gen_llm.generate(prompt=prompt, negative_prompt=negative_prompt, width=512, height=512)
+            image = image_gen_llm.generate(prompt=prompt, negative_prompt=negative_prompt, width=1792, height=1024)
 
         imagePath = os.path.join(subfolder_path, filename)
         image.save(imagePath)
@@ -82,8 +89,8 @@ class SkyboxGen:
         
         # flip twice if not using GpuImageGen because image width is only 512
         times_to_flip = 1
-        if not config.UseGpuImageGen:
-            times_to_flip = 2
+        # if not config.UseGpuImageGen:
+        #     times_to_flip = 2
 
         for _ in range(times_to_flip):
             # Flip the image and append to the right

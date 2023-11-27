@@ -35,7 +35,7 @@ export class StartScreen implements SceneClass {
         RegisterClass("BABYLON.GUI.ScrollViewer", ScrollViewer);
         fetch("http://127.0.0.1:5000/latest-story").then(latestResp => {
             latestResp.json().then(guidData => {
-                const panel: StatusPanel.StatusPanel = new StatusPanel.StatusPanel(guidData.latest_folder);
+                // const panel: StatusPanel.StatusPanel = new StatusPanel.StatusPanel(guidData.latest_folder);
             })
         });
         await AdvancedDynamicTexture.ParseFromSnippetAsync("#HHCQ02#67").then((gui) => {
@@ -87,6 +87,7 @@ export class StartScreen implements SceneClass {
 
                 })
                 .catch(error => console.error('Error:', error));
+                alert("Upload started!")
             });
 
             // === MAIN MENU ===

@@ -13,6 +13,7 @@ from loguru import logger
 from gtts import gTTS
 from llm.fbmusicgen import FbMusicGen
 from llm.fbaudiogen import FbAudioGen
+from openai import OpenAI
 
 class AudioStage(Stage):
 
@@ -65,22 +66,24 @@ class AudioStage(Stage):
                         for character in characters:
                             character_sound_effects.append(character_data[character]["soundeffect"])
 
-                        self.musicgen_model.instantiate()
-                        self.generate_music(mood_music, subfolder_path, music_filename)
-                        self.musicgen_model.dispose() # as a workaround for out of memory issues, dispose resources after generating music. todo: create once to be re-used between subfolders
+                        if config.UseGpuAudioGen:
+                            self.musicgen_model.instantiate()
+                            self.generate_music(mood_music, subfolder_path, music_filename)
+                            self.musicgen_model.dispose() # as a workaround for out of memory issues, dispose resources after generating music. todo: create once to be re-used between subfolders
 
-                        self.audiogen_model.instantiate()
-                        self.generate_characters_audio(character_sound_effects, subfolder_path, characters)
-                        self.audiogen_model.dispose() # as a workaround for out of memory issues, dispose resources after generating audio. todo: create once after musicgen_model has be disposed.
+                            self.audiogen_model.instantiate()
+                            self.generate_characters_audio(character_sound_effects, subfolder_path, characters)
+                            self.audiogen_model.dispose() # as a workaround for out of memory issues, dispose resources after generating audio. todo: create once after musicgen_model has be disposed.
 
-                        json_data["audio"]["mood"] = mood_music
-                        json_data["audio"]["music_file"] = f"{music_filename}.wav"
+                            json_data["audio"]["mood"] = mood_music
+                            json_data["audio"]["music_file"] = f"{music_filename}.wav"
 
                         json_data["audio"]["character_sound_effects"] = {}
-                        for idx, character in enumerate(characters):
-                            json_data["audio"]["character_sound_effects"][character] = {}
-                            json_data["audio"]["character_sound_effects"][character]["description"] = character_sound_effects[idx]
-                            json_data["audio"]["character_sound_effects"][character]["path"] = f"{character}.wav"
+                        if config.UseGpuAudioGen:
+                            for idx, character in enumerate(characters):
+                                json_data["audio"]["character_sound_effects"][character] = {}
+                                json_data["audio"]["character_sound_effects"][character]["description"] = character_sound_effects[idx]
+                                json_data["audio"]["character_sound_effects"][character]["path"] = f"{character}.wav"
 
                 if 'scene.json' in os.listdir(subfolder_path):
                     json_path = os.path.join(subfolder_path, 'scene.json')
@@ -90,8 +93,10 @@ class AudioStage(Stage):
                         title = data.get('title', '')
                         storycontent = data.get('content', '')
                         storycontent = self.clean_white_space(storycontent)
-
-                        self.generate_tts(f"{title}\n{storycontent}", subfolder_path, tts_filename)
+                        if config.UseGpuAudioGen:
+                            self.generate_tts(f"{title}\n{storycontent}", subfolder_path, tts_filename)
+                        else:
+                            self.generate_openai_tts(f"{title}\n{storycontent}", subfolder_path, tts_filename)
                         json_data["audio"]["tts_file"] = f"{tts_filename}.mp3"
                 
                 if json_data:
@@ -125,6 +130,18 @@ class AudioStage(Stage):
 
         tts = gTTS(tts_prompt, lang='en', tld='co.uk')
         tts.save(filepath)
+
+    def generate_openai_tts(self, tts_prompt, path, filename):
+        client = OpenAI(api_key=config.OpenAIApiKey)
+        logger.info("TTS about to generate...")
+        response = client.audio.speech.create(
+            model="tts-1",
+            voice="onyx",
+            input=tts_prompt,
+        )
+
+        filepath = os.path.join(path, f"{filename}.mp3")
+        response.stream_to_file(filepath)
     
     def clean_white_space(self, str):
         return str.replace("\n", " ")
