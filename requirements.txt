@@ -72,7 +72,7 @@ tifffile==2023.8.30
 tokenizers==0.13.3
 torch==2.0.1+cu118
 tqdm==4.66.1
-transformers==4.33.1
+transformers==4.36.0
 transparent-background==1.2.4
 typing_extensions==4.7.1
 tzdata==2023.3
