@@ -45,7 +45,7 @@ openai==1.2.4
 opencv-python-headless==4.8.0.76
 packaging==23.1
 pandas==2.0.2
-Pillow==10.0.0
+Pillow==10.2.0
 platformdirs==3.10.0
 pooch==1.7.0
 priority==2.0.0
